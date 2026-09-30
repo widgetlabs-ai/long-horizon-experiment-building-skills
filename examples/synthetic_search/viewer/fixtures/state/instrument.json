@@ -1,0 +1,10 @@
+{
+  "files": [
+    "scorer.py",
+    "measure.py",
+    "artifact.py",
+    "corpus.py",
+    "validity.py"
+  ],
+  "instrument": "3f9c2a71d04be815"
+}

@@ -1,0 +1,49 @@
+{
+  "artifact_digest": "c3d4e5f607182930",
+  "baseline_val_reward": 0.8,
+  "exempt": [
+    "greeting",
+    "question",
+    "complaint",
+    "order",
+    "farewell"
+  ],
+  "failures": [
+    "val mean fell: 0.8 -> 0.733333333"
+  ],
+  "per_category": {
+    "complaint": {
+      "after": 0.0,
+      "before": 0.0,
+      "exempt": true,
+      "support": 1
+    },
+    "farewell": {
+      "after": 1.0,
+      "before": 1.0,
+      "exempt": true,
+      "support": 1
+    },
+    "greeting": {
+      "after": 1.0,
+      "before": 1.0,
+      "exempt": true,
+      "support": 1
+    },
+    "order": {
+      "after": 1.0,
+      "before": 1.0,
+      "exempt": true,
+      "support": 1
+    },
+    "question": {
+      "after": 0.666666667,
+      "before": 1.0,
+      "exempt": true,
+      "support": 1
+    }
+  },
+  "trace": "run-003-00",
+  "val_reward": 0.733333333,
+  "verdict": "failed"
+}

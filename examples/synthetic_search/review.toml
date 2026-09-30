@@ -1,0 +1,21 @@
+# The reviewer: a stronger model, asked once per generation whether the
+# candidate that passed the gate EARNED its score. It can refuse an adoption; it
+# can never cause one, and it never changes a reward.
+#
+# Off in the committed example on purpose: enabling it costs one model call for
+# every generation whose candidate reaches the gate and passes. Its own file
+# rather than a block in config.*.toml, because the eval framework parses
+# those, both must stay identical apart from three fields, and the reviewer's
+# provider is independent of the rollouts'.
+#
+# `model` is the provider's id for the reviewer. Check it against your
+# provider's model list before enabling; a wrong id is a 404, which stops the
+# run with exit 2 and says so.
+[review]
+enabled = false
+base_url = "https://openrouter.ai/api/v1"
+api_key_var = "REVIEW_API_KEY"
+model = "anthropic/claude-opus-5.5"
+max_tokens = 4096
+rubric = "review.md"
+max_consecutive_vetoes = 3

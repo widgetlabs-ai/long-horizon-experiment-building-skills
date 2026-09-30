@@ -1,0 +1,9 @@
+[project]
+name = "search-viewer"
+version = "0.1.0"
+description = "Local dashboard for a long-horizon search"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.141.1",
+    "uvicorn[standard]>=0.53.0",
+]

@@ -1,0 +1,20 @@
+# B/R shape rules for synthetic_search.
+#
+#   left  = <scratch>/b   (B, written by test/synthetic_generator.py, measurement mocked)
+#   right = <scratch>/r   (R, examples/synthetic_search/tools/reference_run.py, a real run)
+#
+# A whole-FILE difference is matched at the empty path, which cannot be written
+# as a token, so `*` is what stands for it here. See the note in SKILL.md.
+
+# --- objects whose keys are data, not schema
+# The category names are this corpus's taxonomy. Comparing them by name would
+# let B and R agree only because both happen to use the same five.
+map state/baseline_*.json per_category
+map state/cache/*.json per_category
+map state/gate_report.json per_category
+
+# --- what the framework fills in from context neither B nor R has
+ignore outputs/<run>/traces.jsonl traces[].agent.config.*  # a live eval resolves the agent config from its launch file; both B and R build AgentInfo(config={}) and pydantic fills in that model's own defaults
+ignore outputs/<run>/traces.jsonl traces[].stop_condition  # only a live agent loop sets this, from the @vf.stop hook; B never sets it, R hardcodes "final_answer" since its agent is scripted -- neither is what the hook would write
+ignore state/generation *  # a bash redirection in supervisor.sh writes it; no Python writer does, so neither side has it
+ignore state/runs/* *  # the supervisor's own log, written by a bash redirection

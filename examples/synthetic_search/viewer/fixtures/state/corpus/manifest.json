@@ -1,0 +1,16 @@
+{
+  "categories": [
+    "greeting",
+    "question",
+    "complaint",
+    "order",
+    "farewell"
+  ],
+  "counts": {
+    "test": 5,
+    "train": 10,
+    "val": 5
+  },
+  "n": 20,
+  "seed": 7
+}

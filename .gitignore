@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.superpowers/
+
+# Derived state of the example experiments. The form is `state/*`, not
+# `state/`: git does not descend into an excluded directory, so a negation
+# under an excluded directory keeps nothing. Never put a comment on a
+# pattern line — it becomes part of the pattern.
+examples/*/state/*
+!examples/*/state/instrument.json
+!examples/*/state/promotions.jsonl
+!examples/*/state/gate_report.json
+!examples/*/state/reviews.jsonl
+!examples/*/state/.gitkeep
+examples/*/outputs/
+.env.*

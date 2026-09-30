@@ -1,0 +1,4 @@
+#!/bin/sh
+# The agent's tool inside the box. One entry point, so the brief names one thing.
+set -eu
+exec python3 -m synthetic_search.substrate.box "$@"

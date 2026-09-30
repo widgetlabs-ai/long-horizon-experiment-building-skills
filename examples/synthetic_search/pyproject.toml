@@ -1,0 +1,23 @@
+[project]
+name = "synthetic-search"
+version = "0.1.0"
+description = "A synthetic long-horizon search: an agent edits a rule table, a frozen scorer grades it"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+orchestrator = ["verifiers>=0.3.1"]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/synthetic_search"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

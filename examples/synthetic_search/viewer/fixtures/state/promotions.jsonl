@@ -1,0 +1,2 @@
+{"adopted_train_reward": 0.79047619, "artifact_digest": "a1b2c3d4e5f60718", "gain": 0.04274694, "gate_passed": true, "generation": 0, "trace": "run-000-00", "train_reward": 0.79047619, "val_reward": 0.8}
+{"adopted_train_reward": 0.861904762, "artifact_digest": "b2c3d4e5f6071829", "gain": 0.071428572, "gate_passed": true, "generation": 1, "trace": "run-001-01", "train_reward": 0.861904762, "val_reward": 0.8}

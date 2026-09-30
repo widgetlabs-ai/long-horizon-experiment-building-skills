@@ -1,0 +1,42 @@
+{
+  "cached": false,
+  "error": null,
+  "guard_rejected": 0.0,
+  "per_category": {
+    "complaint": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "support": 1
+    },
+    "farewell": {
+      "f1": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 1
+    },
+    "greeting": {
+      "f1": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 1
+    },
+    "order": {
+      "f1": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 1
+    },
+    "question": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "support": 1
+    }
+  },
+  "reward": 0.6,
+  "rows": 5,
+  "score_error": 0.0,
+  "validity_failed": 0.0,
+  "violations": []
+}

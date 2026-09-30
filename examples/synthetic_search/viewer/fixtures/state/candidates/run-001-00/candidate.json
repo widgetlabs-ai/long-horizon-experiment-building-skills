@@ -1,0 +1,10 @@
+{
+  "artifact_unchanged": 0.0,
+  "guard_rejected": 0.0,
+  "reward": null,
+  "rows": 0.0,
+  "score_error": 1.0,
+  "task_class": "greeting",
+  "trace": "run-001-00",
+  "validity_failed": 0.0
+}

@@ -1,0 +1,26 @@
+# Provider: OpenRouter. This file and config.opencode.toml must stay
+# identical apart from base_url, api_key_var and model — a run that switches
+# providers is still the same search, and a second difference makes it not one.
+push = false
+
+[client]
+base_url = "https://openrouter.ai/api/v1"
+api_key_var = "OPENROUTER_API_KEY"
+model = "deepseek/deepseek-v4.1-flash"
+max_tokens = 16384
+
+[env]
+id = "synthetic_search"
+
+[env.taskset]
+num_tasks = 5
+
+[env.agent]
+max_turns = 120
+
+[env.agent.timeout]
+rollout = 3600
+
+[runtime]
+type = "docker"
+image = "synthetic-search:pinned"

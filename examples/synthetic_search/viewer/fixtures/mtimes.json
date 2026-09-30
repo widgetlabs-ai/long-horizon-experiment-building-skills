@@ -1,0 +1,17 @@
+{
+  "outputs/run-000": "2026-09-20T10:00:00",
+  "outputs/run-001": "2026-09-20T10:20:00",
+  "outputs/run-002": "2026-09-20T10:40:00",
+  "outputs/run-003": "2026-09-20T11:00:00",
+  "outputs/run-004": "2026-09-20T11:10:00",
+  "state/candidates/run-000-00/candidate.json": "2026-09-20T10:05:00",
+  "state/candidates/run-000-01/candidate.json": "2026-09-20T10:10:00",
+  "state/candidates/run-000-02/candidate.json": "2026-09-20T10:15:00",
+  "state/candidates/run-001-00/candidate.json": "2026-09-20T10:25:00",
+  "state/candidates/run-001-01/candidate.json": "2026-09-20T10:30:00",
+  "state/candidates/run-001-02/candidate.json": "2026-09-20T10:35:00",
+  "state/candidates/run-002-00/candidate.json": "2026-09-20T10:45:00",
+  "state/candidates/run-002-01/candidate.json": "2026-09-20T10:50:00",
+  "state/candidates/run-002-02/candidate.json": "2026-09-20T10:55:00",
+  "state/candidates/run-003-00/candidate.json": "2026-09-20T11:05:00"
+}

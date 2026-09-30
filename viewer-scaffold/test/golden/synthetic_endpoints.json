@@ -1,0 +1,1669 @@
+{
+  "/api/history": {
+    "promotions": [
+      {
+        "baseline": 0.74772925,
+        "detail": [
+          "artifact a1b2c3d4e5f60718",
+          "train after adoption 0.79047619"
+        ],
+        "gain": 0.04274694,
+        "generation": 0,
+        "held_out": 0.8,
+        "id": "run-000-00",
+        "reward": 0.79047619
+      },
+      {
+        "baseline": null,
+        "detail": [
+          "artifact b2c3d4e5f6071829",
+          "train after adoption 0.861904762"
+        ],
+        "gain": 0.071428572,
+        "generation": 1,
+        "held_out": 0.8,
+        "id": "run-001-01",
+        "reward": 0.861904762
+      }
+    ]
+  },
+  "/api/runs": [
+    {
+      "error_counts": {},
+      "id": "run-004",
+      "mtime": "2026-09-20T11:10:00",
+      "n_failed": 0,
+      "n_ok": 0,
+      "n_rollouts": 0,
+      "n_unreadable": 0,
+      "rollouts": []
+    },
+    {
+      "error_counts": {
+        "EnvError": 1
+      },
+      "id": "run-003",
+      "mtime": "2026-09-20T11:00:00",
+      "n_failed": 1,
+      "n_ok": 1,
+      "n_rollouts": 2,
+      "n_unreadable": 0,
+      "rollouts": [
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [],
+          "gain": 0.023809524000000026,
+          "id": "run-003-00",
+          "label": "question",
+          "ok": true,
+          "reward": 0.885714286,
+          "stop": "final_answer",
+          "turns": 2,
+          "verdict": "scored"
+        },
+        {
+          "detail": [
+            "0 trace(s) in the episode"
+          ],
+          "errors": [
+            "EnvError: SyntheticEnv.run(): the container exited before the agent started"
+          ],
+          "gain": null,
+          "id": "e003b0000",
+          "label": "complaint",
+          "ok": false,
+          "reward": null,
+          "stop": null,
+          "turns": null,
+          "verdict": "no trace"
+        }
+      ]
+    },
+    {
+      "error_counts": {},
+      "id": "run-002",
+      "mtime": "2026-09-20T10:40:00",
+      "n_failed": 0,
+      "n_ok": 3,
+      "n_rollouts": 3,
+      "n_unreadable": 0,
+      "rollouts": [
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [],
+          "gain": null,
+          "id": "run-002-00",
+          "label": "order",
+          "ok": true,
+          "reward": null,
+          "stop": "final_answer",
+          "turns": 2,
+          "verdict": "validity_failed"
+        },
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [],
+          "gain": 0.042857142999999986,
+          "id": "run-002-01",
+          "label": "farewell",
+          "ok": true,
+          "reward": 0.904761905,
+          "stop": "final_answer",
+          "turns": 2,
+          "verdict": "scored"
+        },
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [],
+          "gain": 0.0,
+          "id": "run-002-02",
+          "label": "greeting",
+          "ok": true,
+          "reward": 0.861904762,
+          "stop": "max_turns",
+          "turns": 2,
+          "verdict": "scored"
+        }
+      ]
+    },
+    {
+      "error_counts": {
+        "TaskError": 1
+      },
+      "id": "run-001",
+      "mtime": "2026-09-20T10:20:00",
+      "n_failed": 1,
+      "n_ok": 2,
+      "n_rollouts": 3,
+      "n_unreadable": 0,
+      "rollouts": [
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [],
+          "gain": null,
+          "id": "run-001-00",
+          "label": "greeting",
+          "ok": true,
+          "reward": null,
+          "stop": "final_answer",
+          "turns": 2,
+          "verdict": "score_error"
+        },
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [],
+          "gain": 0.0,
+          "id": "run-001-01",
+          "label": "question",
+          "ok": true,
+          "reward": 0.861904762,
+          "stop": "final_answer",
+          "turns": 2,
+          "verdict": "scored"
+        },
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [
+            "TaskError: scoring: scoring is broken, not this candidate: the instrument changed since it was pinned"
+          ],
+          "gain": null,
+          "id": "run-001-02",
+          "label": "complaint",
+          "ok": false,
+          "reward": null,
+          "stop": "error",
+          "turns": 2,
+          "verdict": "error"
+        }
+      ]
+    },
+    {
+      "error_counts": {},
+      "id": "run-000",
+      "mtime": "2026-09-20T10:00:00",
+      "n_failed": 0,
+      "n_ok": 3,
+      "n_rollouts": 3,
+      "n_unreadable": 0,
+      "rollouts": [
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [],
+          "gain": -0.07142857199999997,
+          "id": "run-000-00",
+          "label": "greeting",
+          "ok": true,
+          "reward": 0.79047619,
+          "stop": "final_answer",
+          "turns": 2,
+          "verdict": "scored"
+        },
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [],
+          "gain": null,
+          "id": "run-000-01",
+          "label": "question",
+          "ok": true,
+          "reward": null,
+          "stop": "final_answer",
+          "turns": null,
+          "verdict": "artifact_unchanged"
+        },
+        {
+          "detail": [
+            "1 trace(s) in the episode"
+          ],
+          "errors": [],
+          "gain": null,
+          "id": "run-000-02",
+          "label": "complaint",
+          "ok": true,
+          "reward": null,
+          "stop": "final_answer",
+          "turns": 2,
+          "verdict": "guard_rejected"
+        }
+      ]
+    }
+  ],
+  "/api/runs/run-000/rollouts/run-000-00": {
+    "calls": [
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "tool_calls",
+        "model": "deepseek-v4.1-flash",
+        "node": 2,
+        "time": {
+          "end": 1790000020.0,
+          "start": 1790000005.0
+        },
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 1800
+        }
+      },
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "stop",
+        "model": "deepseek-v4.1-flash",
+        "node": 4,
+        "time": {
+          "end": 1790000110.0,
+          "start": 1790000100.0
+        },
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 2100
+        }
+      }
+    ],
+    "errors": [],
+    "id": "run-000-00",
+    "metrics": {
+      "artifact_unchanged": 0.0,
+      "guard_rejected": 0.0,
+      "reward": 0.79047619,
+      "rows": 10.0,
+      "score_error": 0.0,
+      "turns": 2.0,
+      "validity_failed": 0.0
+    },
+    "nodes": [
+      {
+        "content": "You are working in /workspace.",
+        "role": "system",
+        "tool_calls": []
+      },
+      {
+        "content": "Read BRIEF.md and improve the rule table.",
+        "role": "user",
+        "tool_calls": []
+      },
+      {
+        "content": "[reasoning] Start by scoring the table as it is.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "call_id": "call_1",
+            "input": "{\"command\": \"rt score\"}",
+            "name": "bash"
+          }
+        ]
+      },
+      {
+        "content": "train macro-F1 0.74773",
+        "role": "tool",
+        "tool_calls": []
+      },
+      {
+        "content": "0.81",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ],
+    "ok": true,
+    "rewards": {
+      "reward": {
+        "score": 0.79047619,
+        "weight": 1.0
+      }
+    },
+    "stop": "final_answer",
+    "tools": [
+      "bash"
+    ]
+  },
+  "/api/runs/run-000/rollouts/run-000-01": {
+    "calls": [],
+    "errors": [],
+    "id": "run-000-01",
+    "metrics": {
+      "artifact_unchanged": 1.0,
+      "guard_rejected": 0.0,
+      "reward": null,
+      "rows": 0.0,
+      "score_error": 0.0,
+      "validity_failed": 0.0
+    },
+    "nodes": [],
+    "ok": true,
+    "rewards": {
+      "reward": {
+        "score": 0.0,
+        "weight": 1.0
+      }
+    },
+    "stop": "final_answer",
+    "tools": []
+  },
+  "/api/runs/run-000/rollouts/run-000-02": {
+    "calls": [
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "tool_calls",
+        "model": "deepseek-v4.1-flash",
+        "node": 2,
+        "time": {
+          "end": 1790000022.0,
+          "start": 1790000007.0
+        },
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 1800
+        }
+      },
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "stop",
+        "model": "deepseek-v4.1-flash",
+        "node": 4,
+        "time": {
+          "end": 1790000112.0,
+          "start": 1790000102.0
+        },
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 2100
+        }
+      }
+    ],
+    "errors": [],
+    "id": "run-000-02",
+    "metrics": {
+      "artifact_unchanged": 0.0,
+      "guard_rejected": 1.0,
+      "reward": null,
+      "rows": 0.0,
+      "score_error": 0.0,
+      "turns": 2.0,
+      "validity_failed": 0.0
+    },
+    "nodes": [
+      {
+        "content": "You are working in /workspace.",
+        "role": "system",
+        "tool_calls": []
+      },
+      {
+        "content": "Read BRIEF.md and improve the rule table.",
+        "role": "user",
+        "tool_calls": []
+      },
+      {
+        "content": "[reasoning] Start by scoring the table as it is.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "call_id": "call_1",
+            "input": "{\"command\": \"rt score\"}",
+            "name": "bash"
+          }
+        ]
+      },
+      {
+        "content": "train macro-F1 0.74773",
+        "role": "tool",
+        "tool_calls": []
+      },
+      {
+        "content": "0.81",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ],
+    "ok": true,
+    "rewards": {
+      "reward": {
+        "score": 0.0,
+        "weight": 1.0
+      }
+    },
+    "stop": "final_answer",
+    "tools": [
+      "bash"
+    ]
+  },
+  "/api/runs/run-001/rollouts/run-001-00": {
+    "calls": [
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "tool_calls",
+        "model": "deepseek-v4.1-flash",
+        "node": 2,
+        "time": {
+          "end": 1790000030.0,
+          "start": 1790000015.0
+        },
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 1800
+        }
+      },
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "stop",
+        "model": "deepseek-v4.1-flash",
+        "node": 4,
+        "time": {
+          "end": 1790000120.0,
+          "start": 1790000110.0
+        },
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 2100
+        }
+      }
+    ],
+    "errors": [],
+    "id": "run-001-00",
+    "metrics": {
+      "artifact_unchanged": 0.0,
+      "guard_rejected": 0.0,
+      "reward": null,
+      "rows": 0.0,
+      "score_error": 1.0,
+      "turns": 2.0,
+      "validity_failed": 0.0
+    },
+    "nodes": [
+      {
+        "content": "You are working in /workspace.",
+        "role": "system",
+        "tool_calls": []
+      },
+      {
+        "content": "Read BRIEF.md and improve the rule table.",
+        "role": "user",
+        "tool_calls": []
+      },
+      {
+        "content": "[reasoning] Start by scoring the table as it is.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "call_id": "call_1",
+            "input": "{\"command\": \"rt score\"}",
+            "name": "bash"
+          }
+        ]
+      },
+      {
+        "content": "train macro-F1 0.74773",
+        "role": "tool",
+        "tool_calls": []
+      },
+      {
+        "content": "0.81",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ],
+    "ok": true,
+    "rewards": {
+      "reward": {
+        "score": 0.0,
+        "weight": 1.0
+      }
+    },
+    "stop": "final_answer",
+    "tools": [
+      "bash"
+    ]
+  },
+  "/api/runs/run-001/rollouts/run-001-01": {
+    "calls": [
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "tool_calls",
+        "model": "deepseek-v4.1-flash",
+        "node": 2,
+        "time": {
+          "end": 1790000031.0,
+          "start": 1790000016.0
+        },
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 1800
+        }
+      },
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "stop",
+        "model": "deepseek-v4.1-flash",
+        "node": 4,
+        "time": {
+          "end": 1790000121.0,
+          "start": 1790000111.0
+        },
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 2100
+        }
+      }
+    ],
+    "errors": [],
+    "id": "run-001-01",
+    "metrics": {
+      "artifact_unchanged": 0.0,
+      "guard_rejected": 0.0,
+      "reward": 0.861904762,
+      "rows": 10.0,
+      "score_error": 0.0,
+      "turns": 2.0,
+      "validity_failed": 0.0
+    },
+    "nodes": [
+      {
+        "content": "You are working in /workspace.",
+        "role": "system",
+        "tool_calls": []
+      },
+      {
+        "content": "Read BRIEF.md and improve the rule table.",
+        "role": "user",
+        "tool_calls": []
+      },
+      {
+        "content": "[reasoning] Start by scoring the table as it is.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "call_id": "call_1",
+            "input": "{\"command\": \"rt score\"}",
+            "name": "bash"
+          }
+        ]
+      },
+      {
+        "content": "train macro-F1 0.74773",
+        "role": "tool",
+        "tool_calls": []
+      },
+      {
+        "content": "0.81",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ],
+    "ok": true,
+    "rewards": {
+      "reward": {
+        "score": 0.861904762,
+        "weight": 1.0
+      }
+    },
+    "stop": "final_answer",
+    "tools": [
+      "bash"
+    ]
+  },
+  "/api/runs/run-001/rollouts/run-001-02": {
+    "calls": [
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "tool_calls",
+        "model": "deepseek-v4.1-flash",
+        "node": 2,
+        "time": {
+          "end": 1790000032.0,
+          "start": 1790000017.0
+        },
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 1800
+        }
+      },
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "stop",
+        "model": "deepseek-v4.1-flash",
+        "node": 4,
+        "time": {
+          "end": 1790000122.0,
+          "start": 1790000112.0
+        },
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 2100
+        }
+      }
+    ],
+    "errors": [
+      "TaskError: scoring: scoring is broken, not this candidate: the instrument changed since it was pinned"
+    ],
+    "id": "run-001-02",
+    "metrics": {},
+    "nodes": [
+      {
+        "content": "You are working in /workspace.",
+        "role": "system",
+        "tool_calls": []
+      },
+      {
+        "content": "Read BRIEF.md and improve the rule table.",
+        "role": "user",
+        "tool_calls": []
+      },
+      {
+        "content": "[reasoning] Start by scoring the table as it is.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "call_id": "call_1",
+            "input": "{\"command\": \"rt score\"}",
+            "name": "bash"
+          }
+        ]
+      },
+      {
+        "content": "train macro-F1 0.74773",
+        "role": "tool",
+        "tool_calls": []
+      },
+      {
+        "content": "0.81",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ],
+    "ok": false,
+    "rewards": {},
+    "stop": "error",
+    "tools": [
+      "bash"
+    ]
+  },
+  "/api/runs/run-002/rollouts/run-002-00": {
+    "calls": [
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "tool_calls",
+        "model": "deepseek-v4.1-flash",
+        "node": 2,
+        "time": {
+          "end": 1790000040.0,
+          "start": 1790000025.0
+        },
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 1800
+        }
+      },
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "stop",
+        "model": "deepseek-v4.1-flash",
+        "node": 4,
+        "time": {
+          "end": 1790000130.0,
+          "start": 1790000120.0
+        },
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 2100
+        }
+      }
+    ],
+    "errors": [],
+    "id": "run-002-00",
+    "metrics": {
+      "artifact_unchanged": 0.0,
+      "guard_rejected": 0.0,
+      "reward": null,
+      "rows": 0.0,
+      "score_error": 0.0,
+      "turns": 2.0,
+      "validity_failed": 1.0
+    },
+    "nodes": [
+      {
+        "content": "You are working in /workspace.",
+        "role": "system",
+        "tool_calls": []
+      },
+      {
+        "content": "Read BRIEF.md and improve the rule table.",
+        "role": "user",
+        "tool_calls": []
+      },
+      {
+        "content": "[reasoning] Start by scoring the table as it is.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "call_id": "call_1",
+            "input": "{\"command\": \"rt score\"}",
+            "name": "bash"
+          }
+        ]
+      },
+      {
+        "content": "train macro-F1 0.74773",
+        "role": "tool",
+        "tool_calls": []
+      },
+      {
+        "content": "0.81",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ],
+    "ok": true,
+    "rewards": {
+      "reward": {
+        "score": 0.0,
+        "weight": 1.0
+      }
+    },
+    "stop": "final_answer",
+    "tools": [
+      "bash"
+    ]
+  },
+  "/api/runs/run-002/rollouts/run-002-01": {
+    "calls": [
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "tool_calls",
+        "model": "deepseek-v4.1-flash",
+        "node": 2,
+        "time": {
+          "end": 1790000041.0,
+          "start": 1790000026.0
+        },
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 1800
+        }
+      },
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "stop",
+        "model": "deepseek-v4.1-flash",
+        "node": 4,
+        "time": {
+          "end": 1790000131.0,
+          "start": 1790000121.0
+        },
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 2100
+        }
+      }
+    ],
+    "errors": [],
+    "id": "run-002-01",
+    "metrics": {
+      "artifact_unchanged": 0.0,
+      "guard_rejected": 0.0,
+      "reward": 0.904761905,
+      "rows": 10.0,
+      "score_error": 0.0,
+      "turns": 2.0,
+      "validity_failed": 0.0
+    },
+    "nodes": [
+      {
+        "content": "You are working in /workspace.",
+        "role": "system",
+        "tool_calls": []
+      },
+      {
+        "content": "Read BRIEF.md and improve the rule table.",
+        "role": "user",
+        "tool_calls": []
+      },
+      {
+        "content": "[reasoning] Start by scoring the table as it is.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "call_id": "call_1",
+            "input": "{\"command\": \"rt score\"}",
+            "name": "bash"
+          }
+        ]
+      },
+      {
+        "content": "train macro-F1 0.74773",
+        "role": "tool",
+        "tool_calls": []
+      },
+      {
+        "content": "0.81",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ],
+    "ok": true,
+    "rewards": {
+      "reward": {
+        "score": 0.904761905,
+        "weight": 1.0
+      }
+    },
+    "stop": "final_answer",
+    "tools": [
+      "bash"
+    ]
+  },
+  "/api/runs/run-002/rollouts/run-002-02": {
+    "calls": [
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "tool_calls",
+        "model": "deepseek-v4.1-flash",
+        "node": 2,
+        "time": {
+          "end": 1790000042.0,
+          "start": 1790000027.0
+        },
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 1800
+        }
+      },
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "stop",
+        "model": "deepseek-v4.1-flash",
+        "node": 4,
+        "time": {
+          "end": 1790000132.0,
+          "start": 1790000122.0
+        },
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 2100
+        }
+      }
+    ],
+    "errors": [],
+    "id": "run-002-02",
+    "metrics": {
+      "artifact_unchanged": 0.0,
+      "guard_rejected": 0.0,
+      "reward": 0.861904762,
+      "rows": 10.0,
+      "score_error": 0.0,
+      "turns": 2.0,
+      "validity_failed": 0.0
+    },
+    "nodes": [
+      {
+        "content": "You are working in /workspace.",
+        "role": "system",
+        "tool_calls": []
+      },
+      {
+        "content": "Read BRIEF.md and improve the rule table.",
+        "role": "user",
+        "tool_calls": []
+      },
+      {
+        "content": "[reasoning] Start by scoring the table as it is.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "call_id": "call_1",
+            "input": "{\"command\": \"rt score\"}",
+            "name": "bash"
+          }
+        ]
+      },
+      {
+        "content": "train macro-F1 0.74773",
+        "role": "tool",
+        "tool_calls": []
+      },
+      {
+        "content": "still working on the order rules",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ],
+    "ok": true,
+    "rewards": {
+      "reward": {
+        "score": 0.861904762,
+        "weight": 1.0
+      }
+    },
+    "stop": "max_turns",
+    "tools": [
+      "bash"
+    ]
+  },
+  "/api/runs/run-003/rollouts/e003b0000": {
+    "calls": [],
+    "errors": [
+      "EnvError: SyntheticEnv.run(): the container exited before the agent started"
+    ],
+    "id": "e003b0000",
+    "metrics": {},
+    "nodes": [],
+    "ok": false,
+    "rewards": {},
+    "stop": null,
+    "tools": []
+  },
+  "/api/runs/run-003/rollouts/run-003-00": {
+    "calls": [
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "tool_calls",
+        "model": "deepseek-v4.1-flash",
+        "node": 2,
+        "time": {
+          "end": 1790000050.0,
+          "start": 1790000035.0
+        },
+        "usage": {
+          "completion_tokens": 120,
+          "prompt_tokens": 1800
+        }
+      },
+      {
+        "endpoint": "/chat/completions",
+        "finish_reason": "stop",
+        "model": "deepseek-v4.1-flash",
+        "node": 4,
+        "time": {
+          "end": 1790000140.0,
+          "start": 1790000130.0
+        },
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 2100
+        }
+      }
+    ],
+    "errors": [],
+    "id": "run-003-00",
+    "metrics": {
+      "artifact_unchanged": 0.0,
+      "guard_rejected": 0.0,
+      "reward": 0.885714286,
+      "rows": 10.0,
+      "score_error": 0.0,
+      "turns": 2.0,
+      "validity_failed": 0.0
+    },
+    "nodes": [
+      {
+        "content": "You are working in /workspace.",
+        "role": "system",
+        "tool_calls": []
+      },
+      {
+        "content": "Read BRIEF.md and improve the rule table.",
+        "role": "user",
+        "tool_calls": []
+      },
+      {
+        "content": "[reasoning] Start by scoring the table as it is.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "call_id": "call_1",
+            "input": "{\"command\": \"rt score\"}",
+            "name": "bash"
+          }
+        ]
+      },
+      {
+        "content": "train macro-F1 0.74773",
+        "role": "tool",
+        "tool_calls": []
+      },
+      {
+        "content": "0.81",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ],
+    "ok": true,
+    "rewards": {
+      "reward": {
+        "score": 0.885714286,
+        "weight": 1.0
+      }
+    },
+    "stop": "final_answer",
+    "tools": [
+      "bash"
+    ]
+  },
+  "/api/state": {
+    "candidates": [
+      {
+        "detail": [
+          "10 train rows"
+        ],
+        "id": "run-003-00",
+        "label": "question",
+        "reward": 0.885714286,
+        "status": "M artifact/rules.py",
+        "verdict": "scored"
+      },
+      {
+        "detail": [
+          "10 train rows"
+        ],
+        "id": "run-002-02",
+        "label": "greeting",
+        "reward": 0.861904762,
+        "status": "",
+        "verdict": "scored"
+      },
+      {
+        "detail": [
+          "10 train rows"
+        ],
+        "id": "run-002-01",
+        "label": "farewell",
+        "reward": 0.904761905,
+        "status": "M artifact/rules.py",
+        "verdict": "scored"
+      },
+      {
+        "detail": [],
+        "id": "run-002-00",
+        "label": "order",
+        "reward": null,
+        "status": "M artifact/rules.py",
+        "verdict": "validity_failed"
+      },
+      {
+        "detail": [],
+        "id": "run-001-02",
+        "label": "complaint",
+        "reward": null,
+        "status": "M artifact/rules.py",
+        "verdict": "no report"
+      },
+      {
+        "detail": [
+          "10 train rows"
+        ],
+        "id": "run-001-01",
+        "label": "question",
+        "reward": 0.861904762,
+        "status": "M artifact/rules.py",
+        "verdict": "scored"
+      },
+      {
+        "detail": [],
+        "id": "run-001-00",
+        "label": "greeting",
+        "reward": null,
+        "status": "M artifact/rules.py",
+        "verdict": "score_error"
+      },
+      {
+        "detail": [],
+        "id": "run-000-02",
+        "label": "complaint",
+        "reward": null,
+        "status": "M artifact/rules.py",
+        "verdict": "guard_rejected"
+      },
+      {
+        "detail": [
+          "no rules.py came back"
+        ],
+        "id": "run-000-01",
+        "label": null,
+        "reward": null,
+        "status": null,
+        "verdict": "artifact_unchanged"
+      },
+      {
+        "detail": [
+          "10 train rows"
+        ],
+        "id": "run-000-00",
+        "label": "greeting",
+        "reward": 0.79047619,
+        "status": "M artifact/rules.py",
+        "verdict": "scored"
+      }
+    ],
+    "extras": [
+      {
+        "kind": "kv",
+        "note": "The baselines are the high-water marks every candidate is ranked against. Adoption rewrites train and val; test is written only by `cli baseline` and is never read by the loop, so it stays the canary it was when the search began.",
+        "place": "top",
+        "rows": [
+          [
+            "train macro-F1 (adopted table)",
+            {
+              "fmt": "score",
+              "text": 0.861904762
+            }
+          ],
+          [
+            "val macro-F1 (adopted table)",
+            {
+              "fmt": "score",
+              "text": 0.8
+            }
+          ],
+          [
+            "test macro-F1 (the table `baseline` last measured)",
+            {
+              "class": "muted",
+              "fmt": "score",
+              "text": 0.6
+            }
+          ],
+          [
+            "test rows",
+            {
+              "fmt": "int",
+              "text": 5
+            }
+          ],
+          [
+            "train rows",
+            {
+              "fmt": "int",
+              "text": 10
+            }
+          ],
+          [
+            "val rows",
+            {
+              "fmt": "int",
+              "text": 5
+            }
+          ],
+          [
+            "instrument pin",
+            "3f9c2a71d04be815"
+          ]
+        ],
+        "title": "baselines and corpus"
+      },
+      {
+        "columns": [
+          "category",
+          "train F1",
+          "val F1",
+          "train support",
+          "val support"
+        ],
+        "kind": "table",
+        "note": "Macro-F1 is the mean of these F1s over categories with support. A category with no rows in a split has no F1, not a zero. The starting per-category values are not kept: adoption overwrites both baselines.",
+        "place": "promotions",
+        "rows": [
+          [
+            "whole split",
+            {
+              "fmt": "score",
+              "text": 0.861904762
+            },
+            {
+              "fmt": "score",
+              "text": 0.8
+            },
+            "",
+            ""
+          ],
+          [
+            "greeting",
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "int",
+              "text": 2
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            }
+          ],
+          [
+            "question",
+            {
+              "fmt": "score",
+              "text": 0.8
+            },
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "int",
+              "text": 2
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            }
+          ],
+          [
+            "complaint",
+            {
+              "fmt": "score",
+              "text": 0.666666667
+            },
+            {
+              "fmt": "score",
+              "text": 0.0
+            },
+            {
+              "fmt": "int",
+              "text": 2
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            }
+          ],
+          [
+            "order",
+            {
+              "fmt": "score",
+              "text": 0.857142857
+            },
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "int",
+              "text": 2
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            }
+          ],
+          [
+            "farewell",
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "int",
+              "text": 2
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            }
+          ]
+        ],
+        "title": "the adopted table, per category"
+      },
+      {
+        "columns": [
+          "category",
+          "before",
+          "after",
+          "change",
+          "support",
+          "exempt"
+        ],
+        "kind": "table",
+        "note": "Val F1 per category before and after the staged table. Every category not listed scored exactly its baseline. An exempt category had too little val support to judge, and the gate skipped it; the support is shown so that can be rechecked.",
+        "place": "promotions",
+        "rows": [
+          [
+            "question",
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "score",
+              "text": 0.666666667
+            },
+            {
+              "class": "bad",
+              "fmt": "score",
+              "text": -0.333333333
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            },
+            {
+              "class": "warn",
+              "text": "exempt"
+            }
+          ],
+          [
+            "complaint",
+            {
+              "fmt": "score",
+              "text": 0.0
+            },
+            {
+              "fmt": "score",
+              "text": 0.0
+            },
+            {
+              "class": "muted",
+              "fmt": "score",
+              "text": 0.0
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            },
+            {
+              "class": "warn",
+              "text": "exempt"
+            }
+          ],
+          [
+            "farewell",
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "class": "muted",
+              "fmt": "score",
+              "text": 0.0
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            },
+            {
+              "class": "warn",
+              "text": "exempt"
+            }
+          ],
+          [
+            "greeting",
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "class": "muted",
+              "fmt": "score",
+              "text": 0.0
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            },
+            {
+              "class": "warn",
+              "text": "exempt"
+            }
+          ],
+          [
+            "order",
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "fmt": "score",
+              "text": 1.0
+            },
+            {
+              "class": "muted",
+              "fmt": "score",
+              "text": 0.0
+            },
+            {
+              "fmt": "int",
+              "text": 1
+            },
+            {
+              "class": "warn",
+              "text": "exempt"
+            }
+          ]
+        ],
+        "title": "last gate, categories that moved or were exempt"
+      }
+    ],
+    "gate": {
+      "after": 0.733333333,
+      "before": 0.8,
+      "failures": [
+        "val mean fell: 0.8 -> 0.733333333"
+      ],
+      "generation": null,
+      "passed": false
+    },
+    "notes": {
+      "candidates": {
+        "terms": [
+          [
+            "scored",
+            "measured on train; the reward is its macro-F1"
+          ],
+          [
+            "artifact_unchanged",
+            "no rules.py came back, so nothing was measured"
+          ],
+          [
+            "guard_rejected",
+            "refused by the guard before it ran"
+          ],
+          [
+            "validity_failed",
+            "refused by the validity check before it was scored"
+          ],
+          [
+            "score_error",
+            "the table raised while classifying, or the scorer returned nothing"
+          ],
+          [
+            "no report",
+            "finalize recorded it, but scoring never ran"
+          ]
+        ],
+        "text": "Every table a rollout returned, from its candidate record. The verdict is the host's measurement only; promote's own ranking verdicts (no gain, regresses a category, eligible) are printed to the supervisor's log and not written to any file."
+      },
+      "gate": "The val gate re-scores the staged winner on a split nothing in the loop has fitted, per category. It fails when the val mean falls, or when any category with enough support drops by more than its tolerance; a category already perfect has no tolerance at all. A failed gate discards the candidate. The report does not record its generation, so a generation is shown only when the same trace was later reviewed or adopted.",
+      "live": "Containers running the rollout image, the supervisor loop if it is up, and the tail of the supervisor's log. The generation number is read from that log.",
+      "promotions": "The reward curve: each adopted winner's macro-F1 on train, with its held-out macro-F1 on val. A generation appears here only if promote found an eligible candidate, the gate passed it and, when review is on, the reviewer did not refuse it. The dashed line is the train baseline the first winner beat.",
+      "reviews": "A stronger model asked, after the gate passes, whether the candidate earned its score. Veto only: it can refuse an adoption, never cause one, and never changes a reward. A refusal counts only when it cites a rubric concern and quotes the diff's changed lines; anything else is recorded and passes, with the reason shown. Too many refusals in a row stop the run, marked here as run stopped.",
+      "rollouts": {
+        "terms": [
+          [
+            "scored",
+            "the host measured the returned table"
+          ],
+          [
+            "artifact_unchanged",
+            "no table came back to score: the rollout never reached finalize"
+          ],
+          [
+            "guard_rejected",
+            "the table reached outside the text it was handed (imports, open, eval, dunders)"
+          ],
+          [
+            "validity_failed",
+            "the table broke an invariant the reward cannot see: labels outside the taxonomy, answers that change between calls, a correct row that flips under a label-preserving rewrite, or a check over its time budget. Never scored"
+          ],
+          [
+            "score_error",
+            "the scorer could not produce a number"
+          ],
+          [
+            "no report",
+            "the rollout ended before the host scored it"
+          ],
+          [
+            "error",
+            "the framework marked the rollout failed"
+          ],
+          [
+            "no trace",
+            "the episode produced no trace: the box died before the agent ran"
+          ],
+          [
+            "final_answer",
+            "stop: the reply ended with a number"
+          ],
+          [
+            "max_turns",
+            "stop: the turn limit"
+          ]
+        ],
+        "text": "An agent edits the rule table in a container and stops by replying with its own score. The host then re-scores the returned table on train; that is the reward, and gain is the reward minus the current train baseline. The brief allows up to 120 turns."
+      },
+      "runs": {
+        "terms": [
+          [
+            "eval died",
+            "the run wrote no episode at all"
+          ],
+          [
+            "running",
+            "the newest run, while the supervisor is up"
+          ]
+        ],
+        "text": "One run is one generation's eval: one rollout per task per repeat, where a task is one category. A rollout counts as failed only when the framework marks it not ok: the container did not start, it ran past its time budget, the model or harness crashed, or scoring raised because the substrate is broken. A bad candidate is a task outcome, never a fail."
+      }
+    },
+    "promotions": [
+      {
+        "baseline": 0.74772925,
+        "detail": [
+          "artifact a1b2c3d4e5f60718",
+          "train after adoption 0.79047619"
+        ],
+        "gain": 0.04274694,
+        "generation": 0,
+        "held_out": 0.8,
+        "id": "run-000-00",
+        "reward": 0.79047619
+      },
+      {
+        "baseline": null,
+        "detail": [
+          "artifact b2c3d4e5f6071829",
+          "train after adoption 0.861904762"
+        ],
+        "gain": 0.071428572,
+        "generation": 1,
+        "held_out": 0.8,
+        "id": "run-001-01",
+        "reward": 0.861904762
+      }
+    ],
+    "reviews": [
+      {
+        "at": "2026-09-20T12:05:00+00:00",
+        "cited": true,
+        "concern": "C1",
+        "generation": 2,
+        "model": "anthropic/claude-opus-5.5",
+        "note": "",
+        "quote": "RULES.insert(0, ('cheers speak soon', 'farewell'))",
+        "reason": "The rule names one training row verbatim instead of a category.",
+        "refused": true,
+        "runaway": false,
+        "trace": "run-002-01"
+      },
+      {
+        "at": "2026-09-20T11:05:00+00:00",
+        "cited": false,
+        "concern": "C9",
+        "generation": 1,
+        "model": "anthropic/claude-opus-5.5",
+        "note": "the refusal cited 'C9', which is not a rubric concern",
+        "quote": "RULES.append",
+        "reason": "Looks like overfitting.",
+        "refused": false,
+        "runaway": false,
+        "trace": "run-001-01"
+      },
+      {
+        "at": "2026-09-20T10:05:00+00:00",
+        "cited": false,
+        "concern": null,
+        "generation": 0,
+        "model": "anthropic/claude-opus-5.5",
+        "note": "",
+        "quote": null,
+        "reason": "The new opener rule generalises to the category.",
+        "refused": false,
+        "runaway": false,
+        "trace": "run-000-00"
+      }
+    ]
+  },
+  "/api/status": {
+    "experiment": "synthetic_search",
+    "outputs_dir": "fixtures/outputs",
+    "runs": [
+      {
+        "id": "run-004",
+        "mtime": "2026-09-20T11:10:00",
+        "rollouts": 0
+      },
+      {
+        "id": "run-003",
+        "mtime": "2026-09-20T11:00:00",
+        "rollouts": 2
+      },
+      {
+        "id": "run-002",
+        "mtime": "2026-09-20T10:40:00",
+        "rollouts": 3
+      },
+      {
+        "id": "run-001",
+        "mtime": "2026-09-20T10:20:00",
+        "rollouts": 3
+      },
+      {
+        "id": "run-000",
+        "mtime": "2026-09-20T10:00:00",
+        "rollouts": 3
+      }
+    ],
+    "state_dir": "fixtures/state"
+  }
+}

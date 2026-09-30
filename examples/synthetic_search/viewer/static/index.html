@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>search viewer</title>
+<style>
+  :root { --bg:#0f1217; --panel:#161b24; --panel2:#1c2330; --line:#232b3a; --text:#d7dde6; --muted:#8a94a6; --accent:#5aa2ff; --ok:#3ecf8e; --bad:#ff6b6b; --warn:#f5c451; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:14px/1.5 ui-sans-serif,system-ui,sans-serif; }
+  header { display:flex; align-items:center; gap:16px; padding:14px 20px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg); z-index:5; flex-wrap:wrap; }
+  header h1 { font-size:16px; margin:0; }
+  .muted { color:var(--muted); }
+  .btn { background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 10px; cursor:pointer; font-size:12px; }
+  .btn:hover { border-color:var(--accent); }
+  .btn.on { background:var(--accent); color:#081018; border-color:var(--accent); }
+  main { padding:20px; max-width:1500px; margin:0 auto; display:grid; gap:20px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+  .card .k { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+  .card .v { font-size:22px; font-weight:600; margin-top:4px; }
+  .card .v.small { font-size:14px; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+  .panel h2 { font-size:13px; margin:0 0 10px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; }
+  pre.log { background:#0a0d12; border:1px solid var(--line); border-radius:8px; padding:10px; font:12px/1.45 ui-monospace,monospace; overflow:auto; max-height:380px; white-space:pre-wrap; word-break:break-word; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.05em; }
+  tr.click { cursor:pointer; } tr.click:hover { background:var(--panel2); }
+  tr.best td { background:rgba(90,162,255,.08); }
+  .star { color:var(--accent); cursor:help; }
+  .msg { border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:6px; padding:8px 10px; margin:6px 0; font-size:12px; }
+  .msg.user { border-left-color:var(--ok); } .msg.tool { border-left-color:var(--warn); }
+  .msg .role { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:4px; }
+  .msg pre { margin:0; white-space:pre-wrap; word-break:break-word; font:12px/1.45 ui-monospace,monospace; }
+  .msg .toolcalls div { background:#0a0d12; border:1px solid var(--line); border-radius:4px; padding:4px 8px; margin-top:3px; }
+  /* min() so a single column never exceeds the viewport: a bare 420px minimum
+     pushed the right column off-screen on anything narrower than ~880px. */
+  .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr)); gap:16px; }
+  .grid2 > * { min-width:0; }
+  .panel { overflow-x:auto; }
+  #extras { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr)); gap:16px; align-items:start; }
+  .extras-slot { display:grid; gap:16px; }
+  #extras:empty, .extras-slot:empty { display:none; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 8px; }
+  .chip { background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:999px; padding:2px 10px; font-size:12px; cursor:pointer; }
+  .chip.on { border-color:var(--accent); color:var(--accent); }
+  .hidden { display:none; }
+  .error { color:var(--bad); }
+  .tiny { font-size:11px; color:var(--muted); }
+  .spark { display:block; margin:2px 0 1px; }
+  .note { font-size:11px; line-height:1.5; color:var(--muted); margin:-4px 0 10px; white-space:pre-wrap; }
+  .note dl { display:grid; grid-template-columns:max-content 1fr; gap:2px 12px; margin:6px 0 0; white-space:normal; }
+  .note dt { color:var(--text); } .note dd { margin:0; }
+  .stale { color:var(--warn); }
+  #rollouts { overflow-x:auto; }
+  .dl { display:flex; gap:6px; align-items:baseline; }
+  .dl .lbl { color:var(--muted); min-width:150px; font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">search viewer</h1>
+  <span class="muted tiny" id="paths"></span>
+  <span style="flex:1"></span>
+  <span class="muted tiny" id="asof"></span>
+  <span class="muted tiny" id="refreshnote"></span>
+  <button class="btn on" id="refreshbtn">auto-refresh</button>
+</header>
+
+<main>
+  <section class="cards" id="livecards"></section>
+  <div class="note hidden" id="note-live"></div>
+
+  <!-- The experiment's own measurements, right under the live cards: they are
+       what the search is moving, so they belong above the drill-down. -->
+  <div id="extras"></div>
+
+  <section class="panel">
+    <h2>supervisor log (live)</h2>
+    <pre class="log" id="logtail"></pre>
+  </section>
+
+  <div class="grid2">
+    <section class="panel">
+      <h2>runs (generations) &rarr; rollouts &rarr; trace</h2>
+      <div class="note hidden" id="note-runs"></div>
+      <div class="note hidden" id="note-rollouts"></div>
+      <table id="runs"><thead><tr><th>run</th><th>rollouts</th><th>ok</th><th>fail</th><th>mtime</th></tr></thead><tbody></tbody></table>
+      <div id="rollouts" class="hidden"></div>
+      <div id="trace" class="hidden"></div>
+    </section>
+
+    <div style="display:grid;gap:16px">
+      <section class="panel">
+        <h2>reward curve (promotions)</h2>
+        <div class="note hidden" id="note-promotions"></div>
+        <div id="curve"><span class="tiny">no promotions yet</span></div>
+        <div id="gate"></div>
+        <div class="note hidden" id="note-gate"></div>
+        <div id="reviews"></div>
+        <div class="note hidden" id="note-reviews"></div>
+      </section>
+
+      <div class="extras-slot" id="extras-promotions"></div>
+
+      <section class="panel">
+        <h2>candidates</h2>
+        <div class="note hidden" id="note-candidates"></div>
+        <div id="candidates"><span class="tiny">none yet</span></div>
+      </section>
+
+      <div class="extras-slot" id="extras-candidates"></div>
+
+      <section class="panel">
+        <h2>logs browser</h2>
+        <div id="loglist"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+const REFRESH_SECONDS = 30;
+let refreshTimer = null, refreshing = false;
+const $ = id => document.getElementById(id);
+
+function esc(s){ return String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function fmt(x){ return (typeof x === 'number') ? x.toFixed(5) : (x ?? '—'); }
+function plural(n, word){ return `${n} ${word}${n === 1 ? '' : 's'}`; }
+// Gains can run from 1e-6 to 1e-3: five decimals would print a real gain as 0.00000.
+function fmtGain(x){
+  if (typeof x !== 'number') return '—';
+  if (x === 0) return '0';
+  const s = Math.abs(x) < 1e-5 ? x.toExponential(1) : x.toFixed(5);
+  return (x > 0 ? '+' : '') + s;
+}
+function age(iso){
+  if (!iso) return '';
+  const secs = Math.round((Date.now() - new Date(iso).getTime()) / 1000);
+  if (!isFinite(secs)) return '';
+  if (secs < 90) return `${secs}s ago`;
+  if (secs < 5400) return `${Math.round(secs/60)} min ago`;
+  return `${Math.round(secs/3600)} h ago`;
+}
+
+async function get(path){
+  const r = await fetch(path, {cache:'no-store'});
+  if (!r.ok) throw new Error(path + ' → ' + r.status);
+  return r.json();
+}
+
+function setRefresh(on){
+  if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
+  if (on) refreshTimer = setInterval(main, REFRESH_SECONDS * 1000);
+  $('refreshbtn').classList.toggle('on', on);
+  $('refreshbtn').textContent = on ? `auto-refresh: on · every ${REFRESH_SECONDS}s` : 'auto-refresh: off';
+  $('refreshnote').textContent = on ? '' : 'auto-refresh off — press the button to re-enable';
+}
+$('refreshbtn').addEventListener('click', () => setRefresh(!refreshTimer));
+
+// --------------------------------------------------------------------- live
+
+function renderStatus(s){
+  document.title = `${s.experiment} viewer`;
+  $('title').textContent = `${s.experiment} viewer`;
+  const containers = s.containers ?? [];
+  const procs = s.processes ?? [];
+  const total = s.runs.reduce((a, r) => a + r.rollouts, 0);
+  const cards = [
+    ['generation', s.log.generation === null ? '—' : s.log.generation, ''],
+    ['rollouts running', s.containers === null ? 'unavailable' : containers.length, s.containers === null ? 'warn' : (containers.length ? '' : 'warn')],
+    ['container ids', (containers.map(c => c.name.slice(0,10)).join(', ') || '—'), 'small'],
+    ['completed rollouts', total, ''],
+    ['supervisor proc', s.processes === null ? 'unavailable' : (procs.length ? 'alive' : '—'), procs.length ? 'ok' : 'warn'],
+    ['log file', s.log.file || '—', 'small'],
+  ];
+  $('livecards').innerHTML = cards.map(([k, v, cls]) =>
+    `<div class="card"><div class="k">${esc(k)}</div><div class="v ${cls ? (cls==='small'?'small ':'')+cls : ''}">${esc(v)}</div></div>`).join('');
+  $('logtail').textContent = s.log.tail || '(empty log)';
+  $('paths').textContent = `outputs ${s.outputs_dir} · state ${s.state_dir}`;
+  $('asof').textContent = `read ${age(s.generated_at)}`;
+}
+
+// --------------------------------------------------------------------- runs
+
+function renderRuns(runs){
+  const tb = $('runs').querySelector('tbody');
+  if (!runs.length) { tb.innerHTML = '<tr><td colspan="5" class="tiny">no runs yet</td></tr>'; return; }
+  tb.innerHTML = runs.map(r => `
+    <tr class="click" data-run="${esc(r.id)}">
+      <td title="${esc(r.id)}">${esc(String(r.id).slice(-12))}${r.state === 'running' ? ' <span class="tiny">running</span>' : ''}</td>
+      ${r.state === 'died'
+        ? `<td colspan="3" class="bad" title="the eval wrote no episode before it stopped">eval died — no episodes</td>`
+        : `<td>${r.n_rollouts}</td>
+      <td class="ok">${r.n_ok}</td>
+      <td class="${r.n_failed?'bad':''}">${r.n_failed}</td>`}
+      <td class="tiny">${esc(r.mtime)}</td>
+    </tr>`).join('');
+  tb.querySelectorAll('tr.click').forEach(tr =>
+    tr.addEventListener('click', () => showRollouts(tr.dataset.run, runs)));
+}
+
+// The rollout an outer loop would stage: the largest gain among those actually
+// scored. Descriptive only — whether it survives the gate is the substrate's
+// business, and this viewer never decides anything.
+function bestRollout(rollouts){
+  const scored = rollouts.filter(e => (e.gain ?? 0) > 0);
+  return scored.length ? scored.reduce((a, b) => (b.gain > a.gain ? b : a)) : null;
+}
+
+function showRollouts(runId, runs){
+  const r = runs.find(x => String(x.id) === String(runId));
+  const box = $('rollouts');
+  $('trace').classList.add('hidden');
+  box.classList.remove('hidden');
+  if (!r) return;
+  const rows = [...r.rollouts].sort((a, b) =>
+    ((b.gain ?? -1) - (a.gain ?? -1)) || ((b.reward ?? 0) - (a.reward ?? 0)));
+  const best = bestRollout(r.rollouts);
+  box.innerHTML =
+    `<div class="tiny">${esc(runId)} — ${plural(r.n_rollouts, 'rollout')}, errors: ${esc(JSON.stringify(r.error_counts))}` +
+    (r.n_unreadable ? ` · <span class="warn">${plural(r.n_unreadable, 'line')} unreadable (being written?)</span>` : '') + `</div>` +
+    `<table><thead><tr><th></th><th>rollout</th><th>task</th><th>stop</th><th>turns</th><th>reward</th><th>gain</th><th>verdict</th><th>detail</th></tr></thead><tbody>` +
+    rows.map(e => {
+      const detail = e.detail || [];
+      return `<tr class="click${e === best ? ' best' : ''}" data-run="${esc(runId)}" data-ep="${esc(e.id)}">
+      <td>${e === best ? '<span class="star" title="largest gain in this generation">★</span>' : ''}</td>
+      <td class="${e.ok?'':'bad'}" title="${esc(e.ok ? '' : (e.errors||[]).join(' | '))}">${esc(e.id)}${e.ok?'':' ✗'}</td>
+      <td>${esc(e.label)}</td>
+      <td>${esc(e.stop)}</td>
+      <td>${esc(e.turns)}</td>
+      <td>${fmt(e.reward)}</td>
+      <td class="${(e.gain ?? 0) > 0 ? 'ok' : 'muted'}">${fmtGain(e.gain)}</td>
+      <td class="${e.verdict && e.verdict !== 'scored' ? 'bad' : ''}">${esc(e.verdict ?? '—')}</td>
+      <td class="tiny" title="${esc(detail.join('\n'))}">${detail.length || '—'}</td></tr>`;
+    }).join('') + `</tbody></table>`;
+  box.querySelectorAll('tr.click').forEach(tr =>
+    tr.addEventListener('click', () => showTrace(tr.dataset.run, tr.dataset.ep)));
+}
+
+async function showTrace(runId, epId){
+  const box = $('trace');
+  box.classList.remove('hidden');
+  box.innerHTML = '<span class="tiny">loading…</span>';
+  let t;
+  try { t = await get(`/api/runs/${encodeURIComponent(runId)}/rollouts/${encodeURIComponent(epId)}`); }
+  catch(e){ box.innerHTML = `<span class="error">${esc(e.message)}</span>`; return; }
+  const calls = (t.calls || []).map(c => `${c.endpoint || ''} ${c.finish_reason || ''} ${c.model || ''}`).join('<br>');
+  box.innerHTML = `
+    <div class="dl"><span class="lbl">rollout</span>${esc(t.id)}</div>
+    <div class="dl"><span class="lbl">status</span><span class="${t.ok?'ok':'bad'}">${t.ok?'ok':'failed'}</span> stop=${esc(t.stop)}</div>
+    <div class="dl"><span class="lbl">rewards</span>${esc(JSON.stringify(t.rewards || {}))}</div>
+    <div class="dl"><span class="lbl">metrics</span>${esc(JSON.stringify(t.metrics || {}))}</div>
+    <div class="dl"><span class="lbl">tools</span>${esc((t.tools||[]).join(', ') || '—')}</div>
+    <div class="dl"><span class="lbl">calls</span>${calls || '—'}</div>
+    ${(t.errors||[]).length ? `<div class="dl"><span class="lbl">errors</span><span class="error">${esc(JSON.stringify(t.errors))}</span></div>` : ''}
+    <div style="margin-top:10px">${(t.nodes||[]).map(n => `
+      <div class="msg ${esc(n.role)}"><div class="role">${esc(n.role)}</div>
+      ${n.content ? `<pre>${esc(n.content)}</pre>` : ''}
+      ${(n.tool_calls||[]).length ? `<div class="toolcalls">${n.tool_calls.map(tc => `<div><b>${esc(tc.name)}</b> <span class="tiny">${esc(tc.call_id)}</span><pre>${esc(tc.input)}</pre></div>`).join('')}</div>` : ''}
+      </div>`).join('') || '<span class="tiny">no nodes</span>'}`;
+}
+
+// ------------------------------------------------------------------- charts
+
+function renderCurve(state){
+  const box = $('curve');
+  const promos = state.promotions || [];
+  if (!promos.length){ box.innerHTML = '<span class="tiny">no promotions yet</span>'; return; }
+  const w = 640, h = 220, pad = {l:46, r:16, t:16, b:28};
+  // A search starts one step BEFORE its first promoted generation: that is the
+  // level the checkout already had, measured the same way as every later point.
+  // The dashed line keeps it visible across the whole chart.
+  const baseline = promos[0].baseline ?? null;
+  const startG = promos[0].generation - 1;
+  const start = baseline === null ? [] : [{generation: startG, reward: baseline}];
+  const points = [...start, ...promos];
+  const xs = points.map(p => p.generation);
+  const ys = points.map(p => p.reward ?? 0);
+  const minG = Math.min(...xs), maxG = Math.max(...xs);
+  const all = [...ys, baseline ?? ys[0]];
+  const lo = Math.min(...all), hi = Math.max(...all);
+  const minY = lo - (hi - lo || 0.001) * 0.2, maxY = hi + (hi - lo || 0.001) * 0.2;
+  const X = g => pad.l + (w - pad.l - pad.r) * (g - minG) / ((maxG - minG) || 1);
+  const Y = v => pad.t + (h - pad.t - pad.b) * (1 - (v - minY) / ((maxY - minY) || 1));
+  const pts = xs.map((g,i) => `${X(g)},${Y(ys[i])}`).join(' ');
+  const svg = `<svg width="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">
+    <line x1="${pad.l}" y1="${h-pad.b}" x2="${w-pad.r}" y2="${h-pad.b}" stroke="#232b3a"/>
+    ${baseline !== null ? `<line x1="${pad.l}" y1="${Y(baseline)}" x2="${w-pad.r}" y2="${Y(baseline)}" stroke="#8a94a6" stroke-dasharray="4 4"/><text x="${w-pad.r-4}" y="${Y(baseline)-4}" fill="#8a94a6" font-size="10" text-anchor="end">baseline ${fmt(baseline)}</text>` : ''}
+    <polyline points="${pts}" fill="none" stroke="#5aa2ff" stroke-width="2"/>
+    ${xs.map((g,i) => { const isStart = start.length && i === 0;
+      return `<circle cx="${X(g)}" cy="${Y(ys[i])}" r="3" fill="${isStart ? '#8a94a6' : '#5aa2ff'}"><title>${isStart ? `before the search: ${fmt(ys[i])}` : `gen ${g}: ${fmt(ys[i])}`}</title></circle>`; }).join('')}
+    ${start.length ? `<text x="${X(startG)}" y="${h-pad.b+12}" fill="#8a94a6" font-size="10" text-anchor="middle">start</text>` : ''}
+    ${promos.map(p => `<text x="${X(p.generation)}" y="${h-pad.b+12}" fill="#8a94a6" font-size="10" text-anchor="middle">${p.generation}</text>`).join('')}
+  </svg>`;
+  box.innerHTML = svg + `<div class="tiny">` + promos.map(p =>
+    `gen ${p.generation} → ${fmt(p.reward)} (${fmtGain(p.gain)})`
+    + (typeof p.held_out === 'number' ? `, held-out ${fmt(p.held_out)}` : '')
+    + ` (${esc(String(p.id).slice(0,8))})`).join(' · ') + `</div>`;
+}
+
+// A sparkline over [x, y] pairs (plus whatever else the caller's `label` uses).
+// It scales to its own range, so it carries the shape of a series and not its
+// size: the numbers themselves belong in the tooltip.
+function spark(points, opts){
+  if (!points || points.length < 2) return '';
+  const o = opts || {};
+  const label = o.label || (p => `${p[0]}: ${fmt(p[1])}`);
+  const w = 84, h = 16, pad = 2, col = o.stroke || '#5aa2ff';
+  const gs = points.map(p => p[0]), vs = points.map(p => p[1]);
+  const g0 = Math.min(...gs), g1 = Math.max(...gs);
+  let lo = Math.min(...vs), hi = Math.max(...vs);
+  if (hi === lo){ lo -= 0.5; hi += 0.5; }   // a series that never moved draws flat, mid-height
+  const X = g => pad + (w - 2*pad) * (g - g0) / ((g1 - g0) || 1);
+  const Y = v => h - pad - (h - 2*pad) * (v - lo) / (hi - lo);
+  const last = points[points.length - 1];
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">`
+    + `<title>${esc(points.map(label).join('\n'))}</title>`
+    + `<polyline points="${points.map(p => `${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}" fill="none" stroke="${col}" stroke-width="1.5"/>`
+    + `<circle cx="${X(last[0]).toFixed(1)}" cy="${Y(last[1]).toFixed(1)}" r="2" fill="${col}"/></svg>`;
+}
+
+// --------------------------------------------------------------- gate, etc.
+
+function renderGate(state){
+  const g = state.gate;
+  const box = $('gate');
+  if (!g){ box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="tiny" style="margin-top:8px">gate gen ${esc(g.generation)}: `
+    + (g.passed ? '<span class="ok">passed</span>' : '<span class="bad">failed</span>')
+    + ` · ${fmt(g.before)} → ${fmt(g.after)}`
+    + ((g.failures||[]).length ? `<br>` + g.failures.map(f => `<span class="bad">${esc(f)}</span>`).join('<br>') : '')
+    + `</div>`;
+}
+
+// Reviews: newest first, the last REVIEWS_SHOWN. A refusal shows the concern
+// it cited and the quote it rests on, because an unexplained veto is the one
+// thing a reader of this page cannot act on. A pass that downgraded a refusal
+// (uncited, misquoted, unreadable) shows why, so a reviewer that keeps
+// producing unusable refusals is visible before it costs a run.
+const REVIEWS_SHOWN = 5;
+function renderReviews(state){
+  const dash = v => (v == null || v === '') ? '—' : esc(v);  // null is "not recorded", not ""
+  const list = state.reviews || [];
+  const box = $('reviews');
+  if (!list.length){ box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="tiny" style="margin-top:8px">'
+    + list.slice(0, REVIEWS_SHOWN).map(r =>
+        `review gen ${dash(r.generation)} · ${dash(r.trace)}: `
+        + (r.refused
+            ? `<span class="bad">refused ${dash(r.concern)}</span>${r.runaway ? ' <span class="bad">(run stopped)</span>' : ''}`
+              + (r.reason ? ` — ${esc(r.reason)}` : '')
+              + (r.quote ? `<br><code>${esc(r.quote)}</code>` : '')
+            : `<span class="ok">passed</span>` + (r.note ? ` <span class="tiny">(${esc(r.note)})</span>` : ''))
+      ).join('<br>')
+    + '</div>';
+}
+
+// Candidates accumulate over the whole search (one per rollout), so the list is
+// folded: in the order experiment.candidates() gives (newest first), the latest
+// CANDIDATES_SHOWN, and a chip per verdict to filter. Filter and unfold survive
+// the auto-refresh.
+const CANDIDATES_SHOWN = 10;
+let candFilter = null, candAll = false, lastState = {};
+$('candidates').addEventListener('click', ev => {
+  const chip = ev.target.closest('[data-verdict]');
+  if (chip){ const v = chip.dataset.verdict; candFilter = (v === '' || v === candFilter) ? null : v; candAll = false; }
+  else if (ev.target.closest('[data-unfold]')) candAll = !candAll;
+  else return;
+  renderCandidates(lastState);
+});
+
+function renderCandidates(state){
+  lastState = state;
+  const box = $('candidates');
+  const all = state.candidates || [];
+  if (!all.length){ box.innerHTML = '<span class="tiny">none yet</span>'; return; }
+  const verdictOf = c => c.verdict ?? '—';
+  const counts = {};
+  for (const c of all) counts[verdictOf(c)] = (counts[verdictOf(c)] || 0) + 1;
+  const chips = `<div class="chips"><span class="chip ${candFilter ? '' : 'on'}" data-verdict="">all ${all.length}</span>` +
+    Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([v, n]) =>
+      `<span class="chip ${candFilter === v ? 'on' : ''}" data-verdict="${esc(v)}">${esc(v)} ${n}</span>`).join('') + `</div>`;
+  const matching = candFilter ? all.filter(c => verdictOf(c) === candFilter) : all;
+  const cs = candAll ? matching : matching.slice(0, CANDIDATES_SHOWN);
+  const more = matching.length > CANDIDATES_SHOWN
+    ? `<button class="btn" data-unfold style="margin-top:8px">${candAll ? 'show latest ' + CANDIDATES_SHOWN : 'show all ' + matching.length}</button>` : '';
+  box.innerHTML = chips + `<table><thead><tr><th>id</th><th>task</th><th>reward</th><th>verdict</th><th>detail</th></tr></thead><tbody>`
+    + cs.map(c => `<tr title="${esc(c.status || '')}"><td>${esc(c.id)}</td><td>${esc(c.label)}</td>`
+      + `<td>${fmt(c.reward)}</td><td class="${c.verdict && c.verdict !== 'scored' ? 'bad' : ''}">${esc(c.verdict ?? '—')}</td>`
+      + `<td class="tiny">${esc((c.detail||[]).join(', ').slice(0,160))}</td></tr>`).join('')
+    + `</tbody></table>` + more;
+}
+
+// ------------------------------------------------------------------- extras
+//
+// Self-describing blocks. This renderer knows nothing about what it is drawing,
+// which is the point: a new measurement is a change in experiment.py and
+// nowhere else.
+
+// A count is not a score. An integer renders as an integer (32 categories, not
+// 32.00000) and a fraction to five decimals; a cell that IS a score but happens
+// to land on a whole number says so with fmt:"score", so a perfect 1 still
+// reads as 1.00000 rather than as a count.
+function fmtCell(x, hint){
+  if (typeof x !== 'number') return x ?? '—';
+  if (hint === 'score') return fmt(x);
+  if (hint === 'int') return String(Math.round(x));
+  return Number.isInteger(x) ? String(x) : fmt(x);
+}
+
+function cell(c){
+  if (c === null || c === undefined) return '—';
+  if (typeof c !== 'object') return esc(fmtCell(c));
+  const body = (c.text === undefined ? '' : esc(fmtCell(c.text, c.fmt)))
+    + (c.spark ? spark(c.spark, {stroke: c.spark_stroke, label: p => `${p[0]}: ${fmtCell(p[1])}`}) : '');
+  return `<span class="${esc(c.class || '')}" title="${esc(c.title || '')}">${body}</span>`;
+}
+
+// A block's `place` picks its slot: "top" (default, under the live cards),
+// "promotions" (under the reward curve) or "candidates" (under the candidates).
+const EXTRA_SLOTS = {top: 'extras', promotions: 'extras-promotions', candidates: 'extras-candidates'};
+
+function renderExtras(state){
+  const bySlot = {};
+  for (const b of state.extras || []) (bySlot[EXTRA_SLOTS[b.place] ? b.place : 'top'] ??= []).push(b);
+  for (const [place, id] of Object.entries(EXTRA_SLOTS)) $(id).innerHTML = renderBlocks(bySlot[place] || []);
+}
+
+function renderBlocks(blocks){
+  return blocks.map(b => {
+    const note = b.note ? `<div class="note">${esc(b.note)}</div>` : '';
+    let body = '';
+    if (b.kind === 'kv'){
+      body = `<table><tbody>` + (b.rows||[]).map(r =>
+        `<tr><td class="muted">${esc(r[0])}</td><td>${cell(r[1])}</td></tr>`).join('') + `</tbody></table>`;
+    } else if (b.kind === 'table'){
+      body = `<table><thead><tr>` + (b.columns||[]).map(c => `<th>${esc(c)}</th>`).join('') + `</tr></thead><tbody>`
+        + (b.rows||[]).map(r => `<tr>` + r.map(c => `<td>${cell(c)}</td>`).join('') + `</tr>`).join('')
+        + `</tbody></table>`;
+    } else if (b.kind === 'series'){
+      body = spark(b.points || [], {}) || '<span class="tiny">not enough points</span>';
+    } else {
+      body = `<span class="tiny">unknown block kind ${esc(b.kind)}</span>`;
+    }
+    return `<section class="panel"><h2>${esc(b.title || b.kind)}</h2>${note}${body}</section>`;
+  }).join('');
+}
+
+async function renderLogs(){
+  const box = $('loglist');
+  let d;
+  try { d = await get('/api/logs'); } catch(e){ box.innerHTML = `<span class="error">${esc(e.message)}</span>`; return; }
+  if (!d.files.length){ box.innerHTML = '<span class="tiny">no logs yet</span>'; return; }
+  box.innerHTML = d.files.map(f =>
+    `<div class="dl" style="cursor:pointer" data-log="${esc(f.name)}"><span class="lbl">${esc(f.name)}</span>${(f.size/1024).toFixed(0)} KB · ${esc(f.mtime)}</div>`).join('');
+  box.querySelectorAll('[data-log]').forEach(el => el.addEventListener('click', async () => {
+    const r = await fetch('/api/logs/' + encodeURIComponent(el.dataset.log));
+    const d2 = await r.json();
+    const pr = document.createElement('pre');
+    pr.className = 'log'; pr.textContent = d2.content;
+    const old = box.querySelector('.log'); if (old) old.remove();
+    box.appendChild(pr);
+  }));
+}
+
+// ------------------------------------------------------------------- notes
+
+// Section prose comes from experiment.notes(): the page itself carries none,
+// so one skeleton can explain any experiment. A note is a string, or
+// {text, terms: [[term, definition], ...]}; both are rendered as plain text.
+const NOTE_SECTIONS = ['live', 'runs', 'rollouts', 'promotions', 'gate', 'reviews', 'candidates'];
+
+function renderNote(el, n){
+  if (!n) { el.innerHTML = ''; el.classList.add('hidden'); return; }
+  const text = typeof n === 'string' ? n : (n.text || '');
+  const terms = (typeof n === 'object' && Array.isArray(n.terms)) ? n.terms : [];
+  el.innerHTML = esc(text) + (terms.length
+    ? `<dl>${terms.map(([t, d]) => `<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join('')}</dl>` : '');
+  el.classList.remove('hidden');
+}
+
+function renderNotes(state){
+  const notes = state.notes || {};
+  for (const s of NOTE_SECTIONS) renderNote($('note-' + s), notes[s]);
+}
+
+async function main(){
+  if (refreshing) return;
+  refreshing = true;
+  try {
+    const [status, runs, state] = await Promise.all([get('/api/status'), get('/api/runs'), get('/api/state')]);
+    renderStatus(status);
+    renderRuns(runs);
+    renderCurve(state);
+    renderGate(state);
+    renderReviews(state);
+    renderCandidates(state);
+    renderExtras(state);
+    renderNotes(state);
+    await renderLogs();
+  } catch(e){
+    console.error(e);
+    $('logtail').textContent = 'error refreshing: ' + e.message;
+  } finally {
+    refreshing = false;
+  }
+}
+
+setRefresh(true);
+main();
+</script>
+</body>
+</html>

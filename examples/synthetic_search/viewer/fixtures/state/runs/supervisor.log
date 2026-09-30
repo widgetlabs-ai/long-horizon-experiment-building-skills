@@ -1,0 +1,25 @@
+provider: opencode (config.opencode.toml)
+=== synthetic-search supervisor starting 2026-09-20T10:00:00+00:00 (log: state/runs/supervisor.log) ===
+--- generation 0 (2026-09-20T10:00:01+00:00) ---
+promote: staged run-000-00 (train 0.79047619, gain 0.04274694)
+gate: passed (val 0.8 vs baseline 0.6)
+review: passed
+adopt: run-000-00 adopted (train 0.79047619, val 0.8)
+--- generation 1 (2026-09-20T11:00:01+00:00) ---
+promote: staged run-001-01 (train 0.861904762, gain 0.071428572)
+gate: passed (val 0.8 vs baseline 0.8)
+review: passed (the refusal cited 'C9', which is not a rubric concern)
+adopt: run-001-01 adopted (train 0.861904762, val 0.8)
+--- generation 2 (2026-09-20T12:00:01+00:00) ---
+promote: staged run-002-01 (train 0.904761905, gain 0.042857143)
+gate: passed (val 0.8 vs baseline 0.8)
+review: refused — C1: The rule names one training row verbatim instead of a category.
+generation 2: the reviewer refused — continuing
+--- generation 3 (2026-09-20T13:00:01+00:00) ---
+promote: staged run-003-00 (train 0.885714286, gain 0.023809524)
+gate: val mean fell: 0.8 -> 0.733333333
+gate: failed — the staged candidate is discarded
+generation 3: the gate said no — continuing
+--- generation 4 (2026-09-20T14:00:01+00:00) ---
+post-generation: no episodes in outputs/run-004 (0 unreadable line(s))
+substrate: post-generation reported a broken substrate — stopping

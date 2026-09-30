@@ -1,0 +1,23 @@
+# The build context filter, and half of the leak boundary.
+#
+# The name matters. `Dockerfile.dockerignore` is honoured ONLY by BuildKit; the
+# legacy builder (DOCKER_BUILDKIT=0, or any Docker before 23) ignores it
+# entirely and every held-out row enters the context. `.dockerignore` is
+# honoured by both, so this file has the name that cannot be switched off.
+#
+# The other half is the Dockerfile's explicit COPY list: it never copies the
+# context wholesale, so held-out data does not reach the image even where a
+# filter is not applied. Both halves are deliberate — one of them being
+# builder-dependent is exactly why there are two.
+state/corpus/val
+state/corpus/test
+state/baseline_val.json
+state/baseline_test.json
+state/cache
+state/candidates
+state/staged
+state/runs
+outputs
+.venv
+__pycache__
+tests

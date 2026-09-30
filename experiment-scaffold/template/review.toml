@@ -1,0 +1,18 @@
+# The reviewer: a stronger model, asked once per generation whether the
+# candidate that passed the gate EARNED its score. It can refuse an adoption; it
+# can never cause one, and it never changes a reward. See contracts.md §8.
+#
+# Its own file, not a block in config.toml: the eval framework parses that one,
+# and the reviewer's provider is independent of the rollouts'.
+#
+# Enabled here because a scaffolder is choosing it deliberately. A committed
+# example others will clone should ship `enabled = false`, so a reader who runs
+# it does not silently start paying.
+[review]
+enabled = true
+base_url = "__REVIEW_BASE_URL__"
+api_key_var = "__REVIEW_KEY_VAR__"
+model = "__REVIEW_MODEL__"
+max_tokens = 4096
+rubric = "review.md"
+max_consecutive_vetoes = 3
