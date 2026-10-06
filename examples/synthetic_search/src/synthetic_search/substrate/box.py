@@ -14,11 +14,12 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import subprocess
 import sys
 from pathlib import Path
 
 from synthetic_search.substrate import artifact as artifact_mod
-from synthetic_search.substrate import corpus, evaluate, measure, promote, validity
+from synthetic_search.substrate import corpus, evaluate, measure, promote, taskset_contract, validity
 from synthetic_search.substrate.errors import EXIT_LOST, EXIT_OK, EXIT_SUBSTRATE, CandidateError, SubstrateError
 
 IN_BOX_SPLIT = "train"
@@ -42,6 +43,94 @@ def _baseline_reward(state: Path) -> float | None:
     return json.loads(path.read_text())["reward"]
 
 
+def _repo_root() -> Path | None:
+    """The in-box git repository holding the artifact, or None when there is none.
+
+    A box run outside a rollout (or a test) has no repository to checkpoint
+    into, and must not treat some unrelated ancestor's `.git` as its own.
+    """
+    artifact = promote.resolve_artifact_path().resolve()
+    for candidate in artifact.parents:
+        if (candidate / ".git").is_dir():
+            return candidate
+    return None
+
+
+def _git(repo: Path, args: list[str]) -> subprocess.CompletedProcess:
+    return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True)
+
+
+def _best_score(repo: Path) -> float | None:
+    """The score recorded on the best tag, or None when the tag does not exist."""
+    result = _git(repo, ["tag", "--list", "--format=%(contents)", taskset_contract.BEST_TAG])
+    text = (result.stdout or "").strip()
+    if not text:
+        return None
+    try:
+        return float(text.splitlines()[0].strip())
+    except ValueError:
+        return None
+
+
+def _artifact_relative(repo: Path) -> str:
+    artifact = promote.resolve_artifact_path().resolve()
+    try:
+        return artifact.relative_to(repo).as_posix()
+    except ValueError:
+        return promote.ARTIFACT_RELATIVE
+
+
+def _seed_best(repo: Path, state: Path) -> None:
+    """Make the unedited baseline the floor of "best".
+
+    A rollout that never beats its baseline should hand back what it was given,
+    not its least-bad edit, so the first checkpoint seeds the tag and the
+    materialised source from the repository's root commit.
+    """
+    if _best_score(repo) is not None:
+        return
+    baseline = _baseline_reward(state)
+    if baseline is None:
+        return
+    root = _git(repo, ["rev-list", "--max-parents=0", "HEAD"]).stdout.strip()
+    if not root:
+        return
+    _git(repo, ["tag", "-f", "-a", taskset_contract.BEST_TAG, "-m", f"{baseline:.6f}", root])
+    content = _git(repo, ["show", f"{root}:{_artifact_relative(repo)}"]).stdout
+    if content:
+        Path(taskset_contract.CHECKPOINT_PATH).write_text(content)
+
+
+def _checkpoint(source: str, reward: float, state: Path) -> None:
+    """Commit a passing version and move the best tag to the highest scorer.
+
+    Only a version that passed the check reaches here: an inadmissible edit is
+    never committed, so the tag can only ever point at something the host would
+    accept. The box's git is throwaway state that `finalize` alone reads.
+    """
+    repo = _repo_root()
+    if repo is None:
+        return
+    _seed_best(repo, state)
+    relative = _artifact_relative(repo)
+    _git(repo, ["add", "--", relative])
+    commit = _git(
+        repo,
+        ["-c", "user.email=rt@example.invalid", "-c", "user.name=rt",
+         "commit", "-qm", f"rt score {reward:.6f}"],
+    )
+    if commit.returncode != 0:
+        # Nothing to commit: the table did not change since the last commit.
+        return
+    best = _best_score(repo)
+    if best is None or reward > best:
+        head = _git(repo, ["rev-parse", "HEAD"]).stdout.strip()
+        if not head:
+            return
+        _git(repo, ["tag", "-f", "-a", taskset_contract.BEST_TAG, "-m", f"{reward:.6f}", head])
+        Path(taskset_contract.CHECKPOINT_PATH).write_text(source)
+
+
 def _score(args) -> int:
     if args.split != IN_BOX_SPLIT:
         print(
@@ -52,7 +141,8 @@ def _score(args) -> int:
         return EXIT_SUBSTRATE
 
     state = _state()
-    report = measure.measure_source(_source(), IN_BOX_SPLIT, state, use_cache=False)
+    source = _source()
+    report = measure.measure_source(source, IN_BOX_SPLIT, state, use_cache=False)
     if report["reward"] is None:
         print(f"rt: no score — {report['error']}")
         return EXIT_LOST
@@ -64,6 +154,7 @@ def _score(args) -> int:
     for name, stats in sorted(report["per_category"].items()):
         f1 = "     —" if stats["f1"] is None else f"{stats['f1']:.4f}"
         print(f"  {name:<12} f1 {f1}   support {stats['support']}")
+    _checkpoint(source, report["reward"], state)
     return EXIT_OK
 
 

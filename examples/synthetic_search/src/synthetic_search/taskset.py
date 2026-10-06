@@ -77,19 +77,45 @@ class SyntheticTask(vf.Task[SyntheticData]):
         return trace.num_turns >= 1 and _FINAL.search(trace.last_reply or "") is not None
 
     async def finalize(self, trace: vf.Trace, runtime: vf.Runtime) -> None:
-        """Copy back exactly the contract's paths, and nothing else."""
+        """Copy back the best admissible version, not the last one.
+
+        `rt score` snapshots its best-scoring admissible version as it goes, so
+        a rollout that improves and then regresses must hand back the
+        improvement, not whatever the working tree held when the turn cap hit.
+        The box materialises that best version to `CHECKPOINT_PATH`; when it is
+        absent (the agent never scored an admissible version) the working tree
+        is the fallback.
+        """
         workdir = self.data.workdir or "/workspace"
         destination = contract.candidate_dir(Path(self.data.state_dir), trace.id)
         destination.mkdir(parents=True, exist_ok=True)
 
+        checkpoint = await self._checkpoint_source(runtime)
+        returned = contract.BEST_TAG if checkpoint is not None else "working-tree"
+
         for relative in contract.ARTIFACT_PATHS:
-            content = await runtime.read(f"{workdir}/{relative}")
+            if checkpoint is not None and relative == contract.ARTIFACT_PATHS[0]:
+                content = checkpoint
+            else:
+                content = await runtime.read(f"{workdir}/{relative}")
             target = destination / Path(relative).name
             target.write_bytes(content)
 
         status = await runtime.exec(["git", "-C", workdir, "status", "--porcelain"])
         (destination / "status.txt").write_text(status.stdout or "")
-        contract.record_candidate(destination, {"trace": str(trace.id), "task_class": self.data.task_class})
+        contract.record_candidate(destination, {
+            "trace": str(trace.id),
+            "task_class": self.data.task_class,
+            "returned": returned,
+        })
+
+    async def _checkpoint_source(self, runtime: vf.Runtime) -> bytes | None:
+        """The box's best-scoring source, or None when it never checkpointed one."""
+        try:
+            content = await runtime.read(contract.CHECKPOINT_PATH)
+        except Exception:
+            return None
+        return content if content else None
 
     async def score(self, trace: vf.Trace, runtime: vf.Runtime | None = None) -> None:
         """The host's number. The box's is steering; this is the reward.

@@ -23,6 +23,16 @@ from synthetic_search.substrate import corpus
 # the container's workdir.
 ARTIFACT_PATHS = ("artifact/rules.py",)
 
+# The in-box checkpoint. `rt score` commits every admissible version to the
+# container's git and tags the best-scoring one, then materialises that tagged
+# version to `CHECKPOINT_PATH`. `finalize` returns it rather than the working
+# tree, so a rollout that improves and then regresses hands back its best
+# admissible version, not its last edit. The container's git is throwaway state
+# that only `finalize` reads; `CHECKPOINT_PATH` is how the tagged content crosses
+# the runtime's file API, which cannot reach git objects directly.
+BEST_TAG = "rt-best"
+CHECKPOINT_PATH = "/tmp/rt-best"
+
 # Splits that must never enter the rollout image's build context. A box that can
 # read the split it is gated on turns the gate into decoration, and nothing
 # anywhere errors.
