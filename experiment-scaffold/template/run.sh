@@ -103,6 +103,7 @@ request = urllib.request.Request(
     headers={
         "Authorization": f"Bearer {os.environ[os.environ['KEY_VAR']]}",
         "Content-Type": "application/json",
+        "User-Agent": "long-horizon-preflight/1",
     },
 )
 try:
