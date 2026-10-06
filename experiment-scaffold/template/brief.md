@@ -11,7 +11,18 @@ and edits nothing scores exactly what it was given, which looks like a
 perfectly reasonable result and teaches nobody anything. An imperfect edit that
 exists beats a perfect one you did not write down.
 
-Finish by replying with your best score as the last thing in your message.
+Finish with a wrap-up, not a mid-experiment afterthought. About fifteen turns
+before the cap, stop experimenting. Restore the best admissible version you
+found — the highest-scoring edit that still passes the check — and re-run the
+check and the score once more, so your last reading is of the version you
+actually keep.
+
+Then reply with a short summary, with your best score as the last thing in the
+message:
+
+- what rule changed, and where it gained;
+- what you tried that did not work;
+- any doubts about the labels you were shown.
 
 ## What you are working on
 
