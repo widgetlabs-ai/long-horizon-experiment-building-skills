@@ -106,7 +106,8 @@ much cheaper now than after a loop is wrapped around it.
 
 This is the checkpoint. Write the experiment's `DESIGN.md` covering: the goal,
 the family and the four answers, the spike's numbers, what is editable and what
-is frozen, the corpus and its splits, the leak boundary, the reward and the
+is frozen, the corpus and its splits, the example arms and their balance, the
+leak boundary, the reward and the
 ways it can return zero, the failures the reward prices and the ones it
 ignores, promotion, the gate and its tolerances, adoption, the rollout model,
 the reviewer model, the rollouts per generation, the budget, and the

@@ -102,6 +102,15 @@ does this metric ignore?* and refuse a metric whose answer is a non-empty set
 the gate cannot see. Record both halves — which failures the reward prices, and
 which it ignores and why — in `DESIGN.md`.
 
+A mean over the whole corpus is not enough by itself. Where the examples divide
+into arms — provenance, deck, twin pair — an arm with almost no good examples
+lets its origin predict the label, and a whole-corpus mean hides it: balanced
+accuracy averaged over everything is dominated by the common arm, so a
+candidate that detects "which arm made this" reads as lift. Ask at the design
+checkpoint what the arms are, and **measure per arm where each arm has enough
+support to be scored on its own**; only then fall back to the whole-corpus mean,
+and say so in `DESIGN.md`. A mean is not a substitute for knowing the arms.
+
 ## 4. The leak boundary
 
 Three splits, always:
