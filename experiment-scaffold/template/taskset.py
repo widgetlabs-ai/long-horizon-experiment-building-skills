@@ -109,9 +109,11 @@ class SyntheticTask(vf.Task[SyntheticData]):
 
         status = await runtime.exec(["git", "-C", workdir, "status", "--porcelain"])
         (destination / "status.txt").write_text(status.stdout or "")
-        (destination / "candidate.json").write_text(
-            json.dumps({"trace": str(trace.id), "task_class": self.data.task_class, "returned": returned}, sort_keys=True) + "\n"
-        )
+        contract.record_candidate(destination, {
+            "trace": str(trace.id),
+            "task_class": self.data.task_class,
+            "returned": returned,
+        })
 
     async def _checkpoint_source(self, runtime: vf.Runtime) -> bytes | None:
         """The box's best-scoring source, or None when it never checkpointed one."""
@@ -121,18 +123,35 @@ class SyntheticTask(vf.Task[SyntheticData]):
             return None
         return content if content else None
 
-    async def score(self, trace: vf.Trace) -> vf.Reward:
-        """The host's number. The box's is steering; this is the reward."""
+    async def score(self, trace: vf.Trace, runtime: vf.Runtime | None = None) -> None:
+        """The host's number. The box's is steering; this is the reward.
+
+        Signature and recording both follow the framework: the caller is
+        `rollout.py`, which passes the runtime positionally and DISCARDS the
+        return value (`rollout.py:488`). A task that returns its reward instead
+        of recording it onto the trace leaves `traces[].rewards` empty, and
+        every reader downstream sees a rollout that was never scored.
+        """
         destination = contract.candidate_dir(Path(self.data.state_dir), trace.id)
         source_path = destination / Path(contract.ARTIFACT_PATHS[0]).name
         if not source_path.is_file():
-            trace.metrics.update(evaluate.summarize({"reward": None, "artifact_unchanged": 1.0}))
-            return vf.Reward(score=0.0, weight=1.0)
+            # `finalize` may not have run at all (a rollout that never
+            # produced a final answer), so this directory can still be
+            # missing -- record the "never measured" candidate anyway, or a
+            # dashboard sees this trace nowhere.
+            destination.mkdir(parents=True, exist_ok=True)
+            metrics = evaluate.summarize({"reward": None, "artifact_unchanged": 1.0})
+            trace.metrics.update(metrics)
+            contract.record_candidate(destination, metrics)
+            trace.record_reward("reward", 0.0, 1.0)
+            return
 
         report = await asyncio.to_thread(self._score_on_host, source_path)
-        trace.metrics.update(evaluate.summarize(report))
+        metrics = evaluate.summarize(report)
+        trace.metrics.update(metrics)
         trace.metrics["turns"] = float(trace.num_turns)
-        return vf.Reward(score=float(report["reward"] or 0.0), weight=1.0)
+        contract.record_candidate(destination, metrics)
+        trace.record_reward("reward", float(report["reward"] or 0.0), 1.0)
 
     def _score_on_host(self, source_path: Path) -> dict:
         """Score in a subprocess: a candidate that hangs costs only itself."""

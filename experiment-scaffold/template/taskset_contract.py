@@ -13,6 +13,8 @@ only symptom is that nothing ever improves.
 
 from __future__ import annotations
 
+import json
+import os
 from pathlib import Path
 
 from __EXPERIMENT__.substrate import corpus
@@ -55,6 +57,46 @@ def held_out_paths() -> tuple[str, ...]:
 def candidate_dir(state: Path, trace_id: str) -> Path:
     """Where a rollout's returned artifact lands."""
     return Path(state) / "candidates" / str(trace_id)
+
+
+CANDIDATE_FILE = "candidate.json"
+
+
+def record_candidate(destination: Path, fields: dict) -> None:
+    """Merge `fields` into the candidate's record.
+
+    Two callers write this file at different moments -- `finalize` knows what
+    came back, `score` knows what it was worth -- and neither owns the whole
+    record. A plain write from the second would drop the first's fields.
+
+    `None` is written as `null` and never coerced to a number: a dashboard
+    shows a missing reading as "—" and a measured zero as a zero, and a reader
+    cannot tell them apart once they are the same value.
+
+    Two failure modes matter here because this is read-modify-write and
+    `finalize` then `score` both call it for the same candidate:
+
+    - A process killed between "read" and "write" must not leave a truncated
+      file that every later call then trips over. Write to a temp file in the
+      same directory and `os.replace` it over the real one: `os.replace` is
+      atomic within a filesystem, so a reader always sees either the whole old
+      file or the whole new one, never a partial write.
+    - An unreadable existing record (from an earlier crash, or anything else)
+      must not make the candidate permanently unwritable -- refusing here
+      would fail every future write to this candidate, not just this one.
+      Start from an empty record instead and carry on. That loses whatever
+      the earlier writer put there, but a candidate with a smaller record is
+      recoverable; a candidate that can never be written to again is not.
+    """
+    path = Path(destination) / CANDIDATE_FILE
+    try:
+        record = json.loads(path.read_text()) if path.is_file() else {}
+    except json.JSONDecodeError:
+        record = {}
+    record.update(fields)
+    tmp = path.with_name(f".{path.name}.tmp")
+    tmp.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
+    os.replace(tmp, path)
 
 
 def render_brief(template: str, data: dict) -> str:
