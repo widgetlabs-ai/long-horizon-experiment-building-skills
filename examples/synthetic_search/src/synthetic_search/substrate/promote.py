@@ -91,15 +91,51 @@ def regressions(before: dict, after: dict) -> list[str]:
     return hurt
 
 
+RANKED_FILENAME = "ranked.json"
+
+
+def read_ranked(state: Path) -> dict:
+    """Every candidate already ranked, keyed by trace.
+
+    Transient state under `state/*` (like `pending.json`): it remembers what a
+    previous generation ranked, so a candidate the gate discarded is not
+    re-measured — and, more importantly, not re-staged — later. A file that
+    cannot be read is treated as empty: losing the memory re-measures, it never
+    fails the loop.
+    """
+    path = Path(state) / RANKED_FILENAME
+    if not path.is_file():
+        return {}
+    try:
+        return json.loads(path.read_text())
+    except json.JSONDecodeError:
+        return {}
+
+
+def write_ranked(state: Path, ranked: dict) -> None:
+    (Path(state) / RANKED_FILENAME).write_text(json.dumps(ranked, indent=2, sort_keys=True) + "\n")
+
+
 def rank(state: Path) -> list[dict]:
-    """Every candidate, scored on train, best first, each with its verdict."""
+    """Every candidate, scored on train, best first, each with its verdict.
+
+    A candidate is measured at most once: one already in `ranked.json` is
+    served from that record without being measured again. Recording the ranking
+    is `promote`'s job, so a caller that only wants verdicts — a test, the
+    viewer — never marks a candidate as seen.
+    """
     state = Path(state)
     baseline = _baseline(state, "train")
     current_source = resolve_artifact_path().read_text() if resolve_artifact_path().is_file() else ""
     candidates_dir = state / "candidates"
+    ranked = read_ranked(state)
     results: list[dict] = []
 
     for directory in sorted(candidates_dir.iterdir()) if candidates_dir.is_dir() else []:
+        if directory.name in ranked:
+            results.append(ranked[directory.name])
+            continue
+
         source_path = directory / "rules.py"
         if not source_path.is_file():
             results.append({"trace": directory.name, "reward": None, "gain": None, "verdict": "no_artifact"})
@@ -139,13 +175,21 @@ def rank(state: Path) -> list[dict]:
 
 
 def promote(state: Path) -> int:
-    """Stage the best eligible candidate. Exit 1 when there is none."""
+    """Stage the best eligible candidate. Exit 1 when there is none.
+
+    Candidates already ranked by an earlier generation are skipped, so a
+    candidate the gate discarded is not re-staged — and does not keep blocking
+    the candidates the next generation produced.
+    """
     state = Path(state)
+    seen = set(read_ranked(state))
     ranked = rank(state)
+    write_ranked(state, {entry["trace"]: entry for entry in ranked})
+
     for entry in ranked:
         print(f"{entry['trace']}: {entry['verdict']} reward={entry['reward']} gain={entry['gain']}")
 
-    eligible = [e for e in ranked if e["verdict"] == "eligible"]
+    eligible = [e for e in ranked if e["verdict"] == "eligible" and e["trace"] not in seen]
     if not eligible:
         print("promote: nothing eligible this generation")
         return EXIT_LOST

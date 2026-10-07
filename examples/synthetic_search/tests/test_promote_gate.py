@@ -110,6 +110,23 @@ def test_a_failed_gate_discards_pending(ready):
     assert not (ready / "pending.json").exists()
 
 
+def test_a_gate_discarded_candidate_is_not_re_staged(ready):
+    # A candidate that passed promote but failed the gate must never be staged
+    # again. Without `ranked.json`, the next generation re-ranks it as the best
+    # eligible candidate and re-stages it forever, blocking new work.
+    _candidate(ready, "t-discarded", BETTER)
+    assert promote.promote(ready) == 0
+    (ready / "staged" / "rules.py").write_text(WORSE)
+    assert regression_gate.gate(ready) == 1
+    assert not (ready / "pending.json").exists()
+
+    # A later generation produces a new candidate of equal merit. It must be
+    # staged, not the discarded one re-staged in its place.
+    _candidate(ready, "t-new", BETTER)
+    assert promote.promote(ready) == 0
+    assert json.loads((ready / "pending.json").read_text())["trace"] == "t-new"
+
+
 def test_gate_exempts_a_low_support_category_and_says_so(ready, capsys, monkeypatch):
     monkeypatch.setattr(promote, "MIN_GATE_SUPPORT", 10_000)
     _candidate(ready, "t-better", BETTER)
