@@ -167,8 +167,8 @@ means they have not thought about it yet.
 ### 5. Verify what you can
 
 ```bash
-uv sync --group dev
-uv run --group dev pytest -q
+uv sync --extra orchestrator --group dev
+uv run --extra orchestrator --group dev pytest -q
 
 # viewer-scaffold admissibility — the three write sites
 grep -rnE "promotions.*\.jsonl" src/ | grep -vE "/tests?/"
