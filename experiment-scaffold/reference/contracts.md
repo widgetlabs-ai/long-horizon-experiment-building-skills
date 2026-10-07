@@ -301,6 +301,14 @@ score improved" asks a model to re-derive a number the scorer already has
 exactly. Every concern names a way to beat the reward that the reward cannot
 see — and that §7's check does not already refuse.
 
+**A provenance-bearing search must carry the "origin, not defect" concern.**
+Where an example carries a source, arm, or generator, a rule that keys on that
+provenance — detecting where the example came from rather than the defect being
+searched for — reads as lift without solving the problem, and the reward can
+price it only if the arms were measured separately (§3). Name the concern
+directly: *does the rule detect the example's origin/source, not a defect?* It
+matters only if the reviewer is on; a disabled reviewer never cites it.
+
 **Keeping a veto accountable.** A reviewer that refuses spuriously kills a
 search silently, because a lost generation is an outcome the loop is built to
 tolerate. So:

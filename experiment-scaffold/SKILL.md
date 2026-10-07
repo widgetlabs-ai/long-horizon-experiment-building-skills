@@ -164,7 +164,11 @@ Write `review.md` the way you write the brief: the frame is fixed, the concerns
 are the domain. Ask the person the same question as for zero rewards — *name the
 ways a candidate could beat this reward without solving the problem* — and turn
 every answer the validity check cannot express into a concern. Fewer than three
-means they have not thought about it yet.
+means they have not thought about it yet. When the corpus carries provenance —
+an example's source, arm, or generator — always add this concern: *does the rule
+detect the example's origin/source, not the defect being searched for?* A rule
+that keys on provenance beats the reward without solving the problem, and the
+validity check cannot express it.
 
 ### 5. Verify what you can
 
