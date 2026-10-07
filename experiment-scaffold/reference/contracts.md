@@ -91,6 +91,17 @@ Without them, a summary of fifteen rollouts reading `0.000` cannot distinguish a
 bad generation from a broken one, and the difference takes log forensics to
 recover.
 
+The flags name the ways a run can return zero. They do not name the failures a
+reward *ignores* — the examples a candidate can flag wrongly at no cost. A
+metric that prices only tagged positives and good negatives credits a rule that
+fingerprints "made by the generator" rather than "has the defect": its false
+alarms on untagged bad examples cost nothing, so recall rises for free and the
+gate can see the change only on the good examples. An ignored class of failures
+is a class a candidate can game. At reward design, ask *what class of failures
+does this metric ignore?* and refuse a metric whose answer is a non-empty set
+the gate cannot see. Record both halves — which failures the reward prices, and
+which it ignores and why — in `DESIGN.md`.
+
 ## 4. The leak boundary
 
 Three splits, always:
