@@ -107,8 +107,22 @@ much cheaper now than after a loop is wrapped around it.
 This is the checkpoint. Write the experiment's `DESIGN.md` covering: the goal,
 the family and the four answers, the spike's numbers, what is editable and what
 is frozen, the corpus and its splits, the leak boundary, the reward and the
-ways it can return zero, promotion, the gate and its tolerances, adoption, and
+ways it can return zero, promotion, the gate and its tolerances, adoption, the
+rollout model, the reviewer model, the rollouts per generation, the budget, and
 the verification layer.
+
+Four of those are not in the code and belong to the person, not the template.
+Ask each, with a default they can accept rather than a blank they must fill:
+
+- **rollout model** — the model the outer loop's rollouts use;
+- **reviewer model** — the stronger model the reviewer asks, only if review is on;
+- **rollouts per generation** — `NUM_ROLLOUTS`, default 3;
+- **budget** — the most the whole search may spend.
+
+Ask explicitly **whether to enable the reviewer**, instead of only reporting the
+choice at hand-over. The reviewer template ships enabled because a scaffolder is
+meant to choose deliberately; a deliberate "off" is the answer that keeps a
+cloned example from silently charging.
 
 `../examples/synthetic_search/DESIGN.md` is what one looks like.
 
@@ -197,8 +211,9 @@ Write for someone who has not followed the work:
    is scaffolded and its preflight passes, viewer-scaffold generates a live
    read-only dashboard for it, and the contracts in `reference/contracts.md`
    are exactly what it greps for.
-   Also state whether review is enabled, which model, and which key variable it
-   reads.
+   Also state the step-3 answers the scaffolded configs carry: the rollout
+   model, the rollouts per generation, the budget, and whether review is enabled
+   — and, if it is, the reviewer model and the key variable it reads.
 6. **Read the first generation before launching a long run.** Give them the
    four questions: did rewards land in a plausible spread, did the artifact
    actually change in most rollouts, what did the agents spend their turns on,
