@@ -52,6 +52,12 @@ class SyntheticData(vf.TaskData):
 class SyntheticTask(vf.Task[SyntheticData]):
     NEEDS_CONTAINER = True
 
+    def runtime_env(self) -> dict[str, str]:
+        # The box cannot see the model's turn count, so the harness hands it the
+        # budget it can count down from. `box.rt` reads this variable and prints
+        # how many turns remain on each `rt score`.
+        return {contract.TURN_BUDGET_ENV: str(self.data.turns)}
+
     async def setup(self, trace: vf.Trace, runtime: vf.Runtime) -> None:
         workdir = self.data.workdir or "/workspace"
         await runtime.write(f"{workdir}/BRIEF.md", self._brief().encode())

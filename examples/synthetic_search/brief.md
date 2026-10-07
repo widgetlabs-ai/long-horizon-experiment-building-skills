@@ -39,7 +39,8 @@ category's alone. The focus is where to start, not a fence.
 ## The tools
 
 - `rt score` — score the current table against the train rows, with the delta
-  against the baseline and a per-category breakdown
+  against the baseline, a per-category breakdown, and how many turns remain in
+  the budget
 - `rt rows [--class C]` — sample rows, optionally of one category, with what
   the table currently predicts for each
 - `rt check` — run the guard and the validity check without scoring

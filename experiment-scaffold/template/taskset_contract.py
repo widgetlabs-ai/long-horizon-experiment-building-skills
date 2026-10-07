@@ -31,6 +31,11 @@ ARTIFACT_PATHS = ("artifact/rules.py",)
 BEST_TAG = "rt-best"
 CHECKPOINT_PATH = "/tmp/rt-best"
 
+# The environment variable that carries the rollout's turn budget into the box.
+# `taskset.runtime_env` sets it; `box` reads it to report how many turns remain.
+# One definition, so the writer and the reader cannot drift onto different names.
+TURN_BUDGET_ENV = "SYNTH_MAX_TURNS"
+
 # Splits that must never enter the rollout image's build context. A box that can
 # read the split it is gated on turns the gate into decoration, and nothing
 # anywhere errors.

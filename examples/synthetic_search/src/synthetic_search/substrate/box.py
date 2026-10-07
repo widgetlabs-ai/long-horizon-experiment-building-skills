@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
 import subprocess
 import sys
@@ -131,6 +132,51 @@ def _checkpoint(source: str, reward: float, state: Path) -> None:
         Path(taskset_contract.CHECKPOINT_PATH).write_text(source)
 
 
+_TURN_FILE = "rt_turns"
+
+
+def _turn_budget() -> int | None:
+    """The rollout's turn budget, or None when the box is not in a rollout.
+
+    The harness passes `max_turns` into the container through this environment
+    variable (see `taskset.runtime_env`); the box counts down from it. A box run
+    by hand, or in a test, has no budget and simply omits the turn line.
+    """
+    raw = os.environ.get(taskset_contract.TURN_BUDGET_ENV)
+    if not raw:
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        return None
+
+
+def _turns_used(state: Path) -> int:
+    """How many times `rt` has run in this container, persisted across calls.
+
+    The box cannot see the model's turn count — the harness passes only the
+    budget, not a running counter — so it tracks its own invocations as the
+    nearest thing it has to "turns spent". It is a steering hint, not an exact
+    count: an agent that calls `rt` several times in one turn reads it as
+    several turns.
+    """
+    try:
+        return int((state / _TURN_FILE).read_text())
+    except (FileNotFoundError, ValueError):
+        return 0
+
+
+def _bump_turn(state: Path) -> None:
+    (state / _TURN_FILE).write_text(str(_turns_used(state) + 1))
+
+
+def _remaining_turns(state: Path) -> int | None:
+    budget = _turn_budget()
+    if budget is None:
+        return None
+    return max(0, budget - _turns_used(state))
+
+
 def _score(args) -> int:
     if args.split != IN_BOX_SPLIT:
         print(
@@ -150,6 +196,9 @@ def _score(args) -> int:
     baseline = _baseline_reward(state)
     delta = evaluate.gain(report["reward"], baseline)
     print(f"reward {report['reward']:.6f}   delta {delta if delta is None else format(delta, '+.6f')}")
+    remaining = _remaining_turns(state)
+    if remaining is not None:
+        print(f"turns remaining: {remaining}")
     print()
     for name, stats in sorted(report["per_category"].items()):
         f1 = "     —" if stats["f1"] is None else f"{stats['f1']:.4f}"
@@ -224,6 +273,8 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
+        if _turn_budget() is not None:
+            _bump_turn(_state())
         return COMMANDS[args.command][0](args)
     except SubstrateError as exc:
         print(f"rt: {exc}", file=sys.stderr)

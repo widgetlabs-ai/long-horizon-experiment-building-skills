@@ -29,6 +29,20 @@ def test_rt_score_prints_a_reward_and_a_delta(boxed, capsys):
     assert "reward" in out and "delta" in out
 
 
+def test_rt_score_prints_turns_remaining_when_a_budget_is_set(boxed, capsys, monkeypatch):
+    monkeypatch.setenv("SYNTH_MAX_TURNS", "10")
+    assert box.main(["score"]) == 0
+    assert "turns remaining: 9" in capsys.readouterr().out
+
+    assert box.main(["score"]) == 0
+    assert "turns remaining: 8" in capsys.readouterr().out
+
+
+def test_rt_score_omits_turns_when_no_budget_is_set(boxed, capsys):
+    assert box.main(["score"]) == 0
+    assert "turns remaining" not in capsys.readouterr().out
+
+
 def test_rt_score_never_touches_a_held_out_split(boxed):
     assert box.main(["score", "--split", "val"]) == 2
 
