@@ -26,7 +26,6 @@ if [[ -n "${OPENCODE_API_KEY:-}" ]]; then
   PROVIDER="opencode"
   ENDPOINT="https://opencode.ai/zen/go/v1"
   KEY_VAR="OPENCODE_API_KEY"
-  MODEL="deepseek-v4.1-flash"
   CONFIG="${CONFIG:-config.opencode.toml}"
   IGNORED=""
   if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
@@ -36,12 +35,19 @@ elif [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
   PROVIDER="openrouter"
   ENDPOINT="https://openrouter.ai/api/v1"
   KEY_VAR="OPENROUTER_API_KEY"
-  MODEL="deepseek/deepseek-v4.1-flash"
   CONFIG="${CONFIG:-config.openrouter.toml}"
   IGNORED=""
 else
   echo "substrate: no API key set — export OPENCODE_API_KEY or OPENROUTER_API_KEY" >&2
   exit 2
+fi
+
+# The rollout model. An explicit MODEL in the environment wins; otherwise it is
+# read from the resolved config, where a scaffold fills __MODEL__ from the
+# design's answer. This file hard-codes no model for every experiment to inherit.
+MODEL="${MODEL:-}"
+if [[ -z "$MODEL" && -f "$CONFIG" ]]; then
+  MODEL="$(sed -nE 's/^[[:space:]]*model[[:space:]]*=[[:space:]]*"([^"]+)"[[:space:]]*$/\1/p' "$CONFIG" | head -n 1)"
 fi
 
 export PROVIDER ENDPOINT KEY_VAR MODEL CONFIG

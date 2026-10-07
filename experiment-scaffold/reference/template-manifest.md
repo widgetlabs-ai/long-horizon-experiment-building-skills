@@ -49,6 +49,7 @@ copying somebody else's domain.
 | placeholder | becomes |
 |---|---|
 | `__EXPERIMENT__` | the experiment's name, and its package's bare module name |
+| `__MODEL__` | the provider's id for the rollout model |
 | `__STATE_ENV__` | the environment variable naming the state directory |
 | `__ARTIFACT_ENV__` | the environment variable overriding the artifact's path |
 | `__ARTIFACT_PATHS__` | the paths a rollout returns |

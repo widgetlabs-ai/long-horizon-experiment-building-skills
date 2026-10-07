@@ -6,7 +6,7 @@ push = false
 [client]
 base_url = "https://opencode.ai/zen/go/v1"
 api_key_var = "OPENCODE_API_KEY"
-model = "deepseek-v4.1-flash"
+model = "__MODEL__"
 max_tokens = 16384
 
 [env]
